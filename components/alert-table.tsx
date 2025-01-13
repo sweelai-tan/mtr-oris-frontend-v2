@@ -15,7 +15,6 @@ import {
   TableRow,
 } from './ui/table';
 
-
 export interface AlertTableProps {
   alerts: Alert[];
   startIndex: number;

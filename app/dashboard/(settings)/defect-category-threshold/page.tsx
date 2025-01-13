@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { abnormalDefectList, DefectClass, Threshold } from '@/lib/types';
-import ThresholdSetting from '@/components/threshold-setting';
+import ThresholdSettingTable from '@/components/threshold-setting-table';
 import { getThresholds, updateThreshold } from '@/lib/api';
 import { useConfig } from '@/lib/config-context';
 import { toast } from '@/hooks/use-toast';
@@ -132,7 +132,7 @@ export default function Page() {
         </Tabs>
       )}
       {selcetedThreshold && (
-        <ThresholdSetting
+        <ThresholdSettingTable
           threshold={selcetedThreshold}
           handdleUpdate={handdleUpdate}
         />
