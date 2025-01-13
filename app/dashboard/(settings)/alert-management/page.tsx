@@ -16,6 +16,7 @@ import { getAlerts } from '@/lib/api';
 import { useConfig } from '@/lib/config-context';
 import { Alert, DateRange } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import CustomPagination from '@/components/custom-pagination';
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,25 +27,28 @@ export default function Page() {
   const dateRangePickerRef = useRef<DataRangePickerHandle>(null);
   const { source } = useConfig();
   const [searchCount, setSearchCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const fetchAlerts = useCallback(async () => {
-    const range = dateRangePickerRef.current?.getDateRange();
-
-    if (!range || !range.from || !range.to) {
+    if (!dateRange || !dateRange.from || !dateRange.to) {
       console.log('dateRange is not set');
       return;
     }
 
     setIsLoading(true);
     setError(null);
+    
     try {
       const response = await getAlerts({
-        dateFrom: range.from,
-        dateTo: range.to,
+        dateFrom: dateRange.from,
+        dateTo: dateRange.to,
         source: source,
       });
-      const alerts = response.data.data['alerts'];
-      setAlerts(alerts);
+      const data = response;
+      console.log('data', data);
+      setAlerts(data);
+      setCurrentPage(1);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'An unknown error occurred',
@@ -53,7 +57,7 @@ export default function Page() {
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchCount]);
+  }, [source, searchCount, dateRange]);
 
   useEffect(() => {
     if (!dateRange) {
@@ -84,17 +88,27 @@ export default function Page() {
     }
   };
 
+  
+  // Calculate the start and end indices for the current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  // Slice the alerts array to get the alerts for the current page
+  const currentAlerts = alerts.slice(startIndex, endIndex);
+
+  console.log('currentAlerts', currentAlerts);
+
   return (
     <div className="flex h-screen flex-col space-y-6">
       <DashboardTitle>Alert Management</DashboardTitle>
       {/* date range section */}
       <div className="flex flex-row items-center justify-between gap-x-4">
         <div className="flex flex-row items-center gap-x-4">
-          <DateRangePicker
+          {dateRange && <DateRangePicker
             dateRange={dateRange}
             ref={dateRangePickerRef}
             type="single"
-          />
+          />}
           <Search
             className={cn('h-4 w-4 cursor-pointer')}
             // onClick={() => setDate(modifiedDate)}
@@ -112,7 +126,17 @@ export default function Page() {
       {error && <div className="text-center text-red-500">{error}</div>}
       {!isLoading && !error && (
         <div>
-          <AlertTable alerts={alerts} />
+          <CustomPagination 
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            totalItems={alerts.length}
+            onItemsPerPageChange={(itemsPerPage) => setItemsPerPage(itemsPerPage)}
+            onCurrentPageChange={(page) => setCurrentPage(page)}
+          />
+          <AlertTable 
+            alerts={currentAlerts}
+            startIndex={startIndex} 
+          />
         </div>
       )}
     </div>

@@ -11,6 +11,7 @@ import {
   Email,
   LoginData,
   Threshold,
+  Alert,
 } from './types';
 
 const axiosInstance = axios.create({
@@ -215,7 +216,7 @@ interface GetAlertsParams {
   source: string;
 }
 
-export const getAlerts = async (params: GetAlertsParams): Promise<any> => {
+export const getAlerts = async (params: GetAlertsParams): Promise<Alert[]> => {
   const { dateFrom, dateTo, source } = params;
 
   const timeZone = 'Asia/Hong_Kong';
@@ -233,7 +234,7 @@ export const getAlerts = async (params: GetAlertsParams): Promise<any> => {
   const response = await axiosInstance.get(
     `/v1/alerts/${source}?${queryParams.toString()}`,
   );
-  return response;
+  return response.data.data['alerts'];
 };
 
 export const getEmails = async (source: string): Promise<any> => {

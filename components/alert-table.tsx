@@ -18,13 +18,14 @@ import {
 
 export interface AlertTableProps {
   alerts: Alert[];
+  startIndex: number;
 }
 
 export interface AlertKey {
   eventAt: string;
 }
 
-export default function AlertTable({ alerts }: AlertTableProps) {
+export default function AlertTable({ alerts, startIndex }: AlertTableProps) {
   const [sortConfig, setSortConfig] = useState({
     key: 'eventAt',
     direction: 'ascending',
@@ -57,6 +58,9 @@ export default function AlertTable({ alerts }: AlertTableProps) {
       <Table>
         <TableHeader>
           <TableRow className="border-gray-800 hover:bg-transparent">
+            <TableHead>
+              <span className="text-gray-400">No.</span>
+            </TableHead>
             <TableHead
               className="text-gray-400"
               onClick={() => requestSort('eventAt')}
@@ -69,19 +73,24 @@ export default function AlertTable({ alerts }: AlertTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedAlerts.map((alert) => (
+          {sortedAlerts.map((alert, index) => (
             <TableRow
               key={alert.id}
               className="border-gray-800 hover:bg-gray-800/50"
             >
-              <TableCell className="text-gray-300">
+              <TableCell className="text-gray-300 w-1/12">
+                {startIndex + index + 1}
+              </TableCell>
+              <TableCell className="text-gray-300 w-2/12">
                 {moment(alert.eventAt)
                   .tz('Asia/Hong_KOng')
-                  .format('YYYY/MM/DD HH:mm:ss')}
+                  .format('DD/MM/YYYY HH:mm:ss')}
               </TableCell>
-              <TableCell className="text-gray-300">{alert.topic}</TableCell>
-              <TableCell className="text-gray-300">
-                {alert.sent ? 'Yes' : 'No'}
+              <TableCell className="text-gray-300 w-7/12">
+                {alert.topic}
+              </TableCell>
+              <TableCell className="text-gray-300 w-2/12">
+                {alert.emails && alert.emails.length > 0 && alert.sent ? 'Yes' : 'No'}
               </TableCell>
             </TableRow>
           ))}
