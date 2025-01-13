@@ -26,6 +26,7 @@ import {
   ChainageRange,
   FilterSectionHandle,
 } from './filter-section';
+import { set } from 'date-fns';
 
 interface StatusCount {
   all: number;
@@ -68,6 +69,7 @@ function EventVerificationPage() {
     to: undefined,
   });
   const [eventDirections, setEventDirections] = useState<string[]>([]);
+  const [sort, setSort] = useState<'ASC' | 'DESC'>('DESC');
   const [searchCounter, setSearchCounter] = useState(0);
 
   const fetchEvents = useCallback(async () => {
@@ -102,6 +104,7 @@ function EventVerificationPage() {
         statusFilter: statusFilter === 'ALL' ? undefined : statusFilter,
         currentPage,
         itemsPerPage,
+        sort,
       });
 
       const responseStatusCount = await getStatusCount({
@@ -179,6 +182,7 @@ function EventVerificationPage() {
     remark,
     statusFilter,
     searchCounter,
+    sort,
   ]);
 
   useEffect(() => {
@@ -209,6 +213,7 @@ function EventVerificationPage() {
       const defectGroup = filterSectionRef.current.getDefectGroup();
       const defectClasses = filterSectionRef.current.getDefectClasses();
       const remark = filterSectionRef.current.getRemark();
+      const sort = filterSectionRef.current.getSort();
 
       setChainageRange(chainageRange);
       setCarName(carName);
@@ -216,6 +221,7 @@ function EventVerificationPage() {
       setDefectGroup(defectGroup);
       setDefectClasses(defectClasses);
       setRemark(remark);
+      setSort(sort);
     }
   };
 

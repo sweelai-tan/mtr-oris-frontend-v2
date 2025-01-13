@@ -46,6 +46,7 @@ interface GetEventsParams {
   statusFilter: string | undefined;
   currentPage: number;
   itemsPerPage: number;
+  sort: string;
 }
 
 export const getEvents = async (params: GetEventsParams): Promise<any> => {
@@ -63,6 +64,7 @@ export const getEvents = async (params: GetEventsParams): Promise<any> => {
     statusFilter,
     currentPage,
     itemsPerPage,
+    sort,
   } = params;
   const timeZone = 'Asia/Hong_Kong';
   const fromDate = dateFrom
@@ -92,6 +94,8 @@ export const getEvents = async (params: GetEventsParams): Promise<any> => {
   }
   if (currentPage) queryParams.append('pageNum', currentPage.toString());
   if (itemsPerPage) queryParams.append('pageSize', itemsPerPage.toString());
+
+  if (sort) queryParams.append('sort', sort);
 
   const response = await axiosInstance.get(
     `/v1//events/${source}?${queryParams.toString()}`,

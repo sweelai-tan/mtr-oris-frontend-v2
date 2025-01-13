@@ -3,6 +3,8 @@ export type DateRange = {
   to?: Date | undefined;
 };
 
+export type Sort = 'ASC' | 'DESC';
+
 export enum EventSource {
   SIL_EMAIL = 'SIL_EMAIL',
   SIL_VIDEO = 'SIL_VIDEO',

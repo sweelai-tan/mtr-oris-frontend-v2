@@ -10,6 +10,7 @@ import { MultiSelect } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Select,
   SelectTrigger,
@@ -24,7 +25,10 @@ import { EventSource ,
   eventDirectionList,
   normalDefectList,
   silCarNameList,
+  Sort,
 } from '@/lib/types';
+import { SortAsc } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 
 
 export type ChainageRange = {
@@ -57,25 +61,9 @@ export interface FilterSectionHandle {
   getDefectGroup: () => string | undefined;
   getDefectClasses: () => string[];
   getRemark: () => string | undefined;
+  getSort: () => Sort;
 }
 
-// const FilterSection: React.FC<FilterSectionProps> = ({
-//   source,
-//   eventDirections,
-//   setEventDirections,
-//   chainageRange,
-//   setChainageRange,
-//   defectGroup,
-//   setDefectGroup,
-//   defectClasses,
-//   setDefectClasses,
-//   carName,
-//   setCarName,
-//   remark,
-//   setRemark,
-//   fetchEvents,
-//   clearFilters,
-// }) => {
 export const FilterSection = forwardRef<
   FilterSectionHandle,
   FilterSectionProps
@@ -93,6 +81,7 @@ export const FilterSection = forwardRef<
   const [defectGroup, setDefectGroup] = useState<string | undefined>(undefined);
   const [defectClasses, setDefectClasses] = useState<string[]>([]);
   const [remark, setRemark] = useState<string | undefined>();
+  const [sort, setSort] = useState<Sort>('DESC');
 
   useImperativeHandle(ref, () => ({
     getCarName: () => carName,
@@ -101,6 +90,7 @@ export const FilterSection = forwardRef<
     getDefectGroup: () => defectGroup,
     getDefectClasses: () => defectClasses,
     getRemark: () => remark,
+    getSort: () => sort,
   }));
 
   const clearFilters = () => {
@@ -191,7 +181,7 @@ export const FilterSection = forwardRef<
           {/* second row */}
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
             <div className="space-y-2">
-              <label className="text-xs text-slate-50">Defect Category</label>
+              <Label className="text-xs text-slate-50">Defect Category</Label>
               <Select
                 onValueChange={(v) => {
                   setDefectClasses([]);
@@ -234,6 +224,26 @@ export const FilterSection = forwardRef<
               <label className="text-xs text-slate-200">
                 Select defect category first
               </label>
+            </div>
+
+            {/* Sort */}
+            <div className="space-y-2">
+            <Label className="text-xs text-slate-50">Sort Order</Label>
+            <RadioGroup
+              value={sort}
+              onValueChange={(v) => setSort(v as Sort)}
+            >
+              <div className='flex flex-row space-x-4 items-center pt-2'>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="DESC" id="r2" />
+                  <Label htmlFor="r2">Desc</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="ASC" id="r3" />
+                  <Label htmlFor="r3">Asc</Label>
+                </div>
+                </div>
+            </RadioGroup>
             </div>
           </div>
           {/* remark input */}
