@@ -82,6 +82,7 @@ export default function Page() {
         statusFilter: statusFilter === 'ALL' ? undefined : statusFilter,
         currentPage,
         itemsPerPage,
+        sort: 'DESC',
       });
 
       const originalEvents: Event[] = responseEvents.data.data['events'];

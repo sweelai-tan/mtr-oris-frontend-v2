@@ -1,9 +1,9 @@
 'use client';
 
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
 
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import {
   DefectClass,
   Threshold,

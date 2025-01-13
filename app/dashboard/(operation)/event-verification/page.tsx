@@ -26,7 +26,6 @@ import {
   ChainageRange,
   FilterSectionHandle,
 } from './filter-section';
-import { set } from 'date-fns';
 
 interface StatusCount {
   all: number;

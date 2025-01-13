@@ -27,7 +27,6 @@ import { EventSource ,
   silCarNameList,
   Sort,
 } from '@/lib/types';
-import { SortAsc } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 
 
