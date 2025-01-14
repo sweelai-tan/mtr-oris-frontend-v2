@@ -267,14 +267,10 @@ export default function EventCard(params: Event) {
           ? EventStatus.VERIFIED
           : modifiedEvent.status;
 
-        await updateEvent(
-          modifiedEvent.source,
-          modifiedEvent.id,
-          {
-            status: status,
-          remark: modifiedEvent.remark,
-          },
-        );
+      await updateEvent(modifiedEvent.source, modifiedEvent.id, {
+        status: status,
+        remark: modifiedEvent.remark,
+      });
 
       toast({
         title: 'Update event',
@@ -315,15 +311,15 @@ export default function EventCard(params: Event) {
         : modifiedEvent.sysDefects[0]
       : modifiedEvent.defects[0];
 
-  console.log('event:', event.defects);
-  console.log('modifiedEvent:', modifiedEvent.defects);
+  // console.log('event:', event.defects);
+  // console.log('modifiedEvent:', modifiedEvent.defects);
 
   return (
-    <div className="flex items-center justify-center p-1">
-      <Card className="w-full max-w-2xl border-slate-800 bg-slate-900 text-slate-200">
+    <div className="flex w-full items-center justify-center p-1">
+      <Card className="w-full border-slate-800 bg-slate-900 text-slate-200">
         <CardContent className="p-4">
           <div className="flex flex-col items-center justify-between">
-            <div className="space-y-4">
+            <div className="w-full space-y-4">
               {/* Main Content */}
               <div className="grid grid-cols-[3fr,2fr] gap-2">
                 {/* Left side - Image placeholder */}
@@ -360,14 +356,6 @@ export default function EventCard(params: Event) {
 
                 {/* Right side - Details */}
                 <div className="space-y-2 text-sm">
-                  {/* date  */}
-                  <div className="flex items-center justify-between pb-2">
-                    <Image src={DateIcon} alt="Date" />
-                    <div className="w-full pl-4 text-gray-400">
-                      {localEventAt}
-                    </div>
-                  </div>
-
                   {/* car name */}
                   <div className="flex items-center justify-between pb-2">
                     <Image src={DateIcon} alt="Date" />
@@ -376,12 +364,45 @@ export default function EventCard(params: Event) {
                     </div>
                   </div>
 
+                  {/* date  */}
+                  <div className="flex items-center justify-between pb-2">
+                    <Image src={DateIcon} alt="Date" />
+                    <div className="w-full pl-4 text-gray-400">
+                      {localEventAt}
+                    </div>
+                  </div>
+
                   {/* status */}
                   <div className="flex items-center gap-1 pb-2">
                     <Image src={StatusIcon} alt="Status" />
                     <div className="flex w-full flex-row items-center gap-x-2 pl-4">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
-                      <span className="text-green-500">
+                      <CheckCircle2
+                        className={cn(
+                          'h-4 w-4',
+                          modifiedEvent.status === EventStatus.PENDING
+                            ? 'text-yellow-500'
+                            : '',
+                          modifiedEvent.status === EventStatus.VERIFIED
+                            ? 'text-green-500'
+                            : '',
+                          modifiedEvent.status === EventStatus.MODIFIED
+                            ? 'text-blue-500'
+                            : '',
+                        )}
+                      />
+                      <span
+                        className={cn(
+                          modifiedEvent.status === EventStatus.PENDING
+                            ? 'text-yellow-500'
+                            : '',
+                          modifiedEvent.status === EventStatus.VERIFIED
+                            ? 'text-green-500'
+                            : '',
+                          modifiedEvent.status === EventStatus.MODIFIED
+                            ? 'text-blue-500'
+                            : '',
+                        )}
+                      >
                         {statusTranslations[modifiedEvent.status]}
                       </span>
                     </div>
@@ -390,6 +411,7 @@ export default function EventCard(params: Event) {
 
                   <Separator className="mb-2 mt-2" />
 
+                  {/* direction */}
                   <div className="flex items-center justify-between gap-x-2">
                     <Image src={DirectionIcon} alt="Direction" />
                     <Select
@@ -416,6 +438,23 @@ export default function EventCard(params: Event) {
                     </Select>
                   </div>
 
+                  {/* chainage */}
+                  <div className="flex items-center justify-between gap-x-2">
+                    <Image src={ChainangeIcon} alt="Chainange" />
+                    {/* <span className="text-gray-400 w-full pl-4">{chainage}</span> */}
+                    <Input
+                      type="number"
+                      value={modifiedEvent.chainage}
+                      onChange={(e) => {
+                        setModifiedEvent({
+                          ...modifiedEvent,
+                          chainage: parseFloat(e.target.value),
+                        });
+                      }}
+                    />
+                    {/* <ChevronDown className="w-4 h-4 text-gray-400" /> */}
+                  </div>
+
                   <div className="flex items-center justify-between gap-x-2">
                     <Image src={ChainangeIcon} alt="Chainange" />
                     <Select
@@ -440,22 +479,6 @@ export default function EventCard(params: Event) {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-x-2">
-                    <Image src={ChainangeIcon} alt="Chainange" />
-                    {/* <span className="text-gray-400 w-full pl-4">{chainage}</span> */}
-                    <Input
-                      type="number"
-                      value={modifiedEvent.chainage}
-                      onChange={(e) => {
-                        setModifiedEvent({
-                          ...modifiedEvent,
-                          chainage: parseFloat(e.target.value),
-                        });
-                      }}
-                    />
-                    {/* <ChevronDown className="w-4 h-4 text-gray-400" /> */}
                   </div>
 
                   <div className="flex items-center justify-between gap-x-2">

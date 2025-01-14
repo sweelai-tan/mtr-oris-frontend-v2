@@ -139,13 +139,17 @@ const videoSidebarItems = [
     ],
   },
   {
-    title: 'Inferencing',
+    title: 'Video Inferencing',
     items: [
-      { name: 'Inference job', icon: Gauge, href: '/dashboard/inference-job' },
       {
-        name: 'New inference job',
+        name: 'Import video',
+        icon: Gauge,
+        href: '/dashboard/inference-import-video',
+      },
+      {
+        name: 'Classified events in video',
         icon: Plus,
-        href: '/dashboard/new-inference-job',
+        href: '/dashboard/inference-events',
       },
     ],
   },
@@ -192,10 +196,11 @@ export function AppSidebar() {
   const { source } = useConfig();
   const sidebarItems =
     source === EventSource.EAL_EMAIL ||
-    EventSource.SIL_EMAIL ||
-    EventSource.TML_EMAIL
+    source === EventSource.SIL_EMAIL ||
+    source === EventSource.TML_EMAIL
       ? emailSidebarItems
       : videoSidebarItems;
+  console.log('sidebar sidebarItems:', sidebarItems);
 
   return (
     <Sidebar>

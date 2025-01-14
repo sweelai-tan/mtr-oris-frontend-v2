@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
@@ -77,19 +77,21 @@ export default function AlertTable({ alerts, startIndex }: AlertTableProps) {
               key={alert.id}
               className="border-gray-800 hover:bg-gray-800/50"
             >
-              <TableCell className="text-gray-300 w-1/12">
+              <TableCell className="w-1/12 text-gray-300">
                 {startIndex + index + 1}
               </TableCell>
-              <TableCell className="text-gray-300 w-2/12">
+              <TableCell className="w-2/12 text-gray-300">
                 {moment(alert.eventAt)
                   .tz('Asia/Hong_KOng')
                   .format('DD/MM/YYYY HH:mm:ss')}
               </TableCell>
-              <TableCell className="text-gray-300 w-7/12">
+              <TableCell className="w-7/12 text-gray-300">
                 {alert.topic}
               </TableCell>
-              <TableCell className="text-gray-300 w-2/12">
-                {alert.emails && alert.emails.length > 0 && alert.sent ? 'Yes' : 'No'}
+              <TableCell className="w-2/12 text-gray-300">
+                {alert.emails && alert.emails.length > 0 && alert.sent
+                  ? 'Yes'
+                  : 'No'}
               </TableCell>
             </TableRow>
           ))}

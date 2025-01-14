@@ -70,6 +70,7 @@ function EventVerificationPage() {
   const [eventDirections, setEventDirections] = useState<string[]>([]);
   const [sort, setSort] = useState<'ASC' | 'DESC'>('DESC');
   const [searchCounter, setSearchCounter] = useState(0);
+  const [gridColumns, setGridColumns] = useState(2);
 
   const fetchEvents = useCallback(async () => {
     console.log(
@@ -204,6 +205,39 @@ function EventVerificationPage() {
     }
   }, [firstLoad, fetchEvents]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const zoomLevel = window.devicePixelRatio * 100;
+
+      console.log(`zoomLevel`, zoomLevel);
+      console.log(`window.innerWidth`, window.innerWidth);
+      console.log(`window.innerHeight`, window.innerHeight);
+      setGridColumnsBaseOnInnerWidth(window.innerWidth);
+      // setGridColumnsBaseOnZooomLevel(zoomLevel);
+    };
+    window.addEventListener('resize', handleResize);
+
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const setGridColumnsBaseOnInnerWidth = (width: number) => {
+    if (width <= 960) {
+      setGridColumns(1);
+    } else if (width > 960 && width <= 1280) {
+      setGridColumns(2);
+    } else if (width > 1280 && width <= 1600) {
+      setGridColumns(3);
+    } else if (width > 1600 && width <= 1920) {
+      setGridColumns(4);
+    } else {
+      setGridColumns(5);
+    }
+  };
+
   const handleFilterApply = () => {
     if (filterSectionRef.current) {
       const chainageRange = filterSectionRef.current.getChainageRange();
@@ -214,6 +248,11 @@ function EventVerificationPage() {
       const remark = filterSectionRef.current.getRemark();
       const sort = filterSectionRef.current.getSort();
 
+      if (dateRangePickerRef.current) {
+        const dateRange = dateRangePickerRef.current.getDateRange();
+        setDateRange(dateRange);
+      }
+
       setChainageRange(chainageRange);
       setCarName(carName);
       setEventDirections(eventDirections);
@@ -221,6 +260,7 @@ function EventVerificationPage() {
       setDefectClasses(defectClasses);
       setRemark(remark);
       setSort(sort);
+      setSearchCounter(searchCounter + 1);
     }
   };
 
@@ -312,27 +352,6 @@ function EventVerificationPage() {
           <Search className="h-4 w-4 cursor-pointer text-primary" />
         </Button>
       </div>
-      {/* filter section */}
-      {isFilteringVisible && (
-        <FilterSection
-          source={source}
-          ref={filterSectionRef}
-          // eventDirections={eventDirections}
-          // setEventDirections={setEventDirections}
-          // chainageRange={chainageRange}
-          // setChainageRange={setChainageRange}
-          // defectGroup={defectGroup}
-          // setDefectGroup={setDefectGroup}
-          // defectClasses={defectClasses}
-          // setDefectClasses={setDefectClasses}
-          // carName={carName}
-          // setCarName={setCarName}
-          // remark={remark}
-          // setRemark={setRemark}
-          fetchEvents={handleFilterApply}
-          // clearFilters={clearFilters}
-        />
-      )}
 
       {/* status section */}
       <div className="flex flex-row items-center gap-x-4">
@@ -353,6 +372,15 @@ function EventVerificationPage() {
         />
       </div>
 
+      {/* filter section */}
+      {isFilteringVisible && (
+        <FilterSection
+          source={source}
+          ref={filterSectionRef}
+          fetchEvents={handleFilterApply}
+        />
+      )}
+
       {isLoading ? <Loading /> : null}
       {error ? <Error message={error} /> : null}
 
@@ -372,7 +400,7 @@ function EventVerificationPage() {
 
           {/* card list */}
           {events && events.length > 0 && (
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2">
+            <div className={`grid grid-cols-${gridColumns} gap-2`}>
               {events.map((event, index) => {
                 return <EventCard key={index} {...event} />;
               })}
@@ -403,5 +431,5 @@ export default function Page() {
         <EventVerificationPage />
       </Suspense>
     </>
-  )
+  );
 }

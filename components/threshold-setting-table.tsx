@@ -4,11 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import {
-  DefectClass,
-  Threshold,
-  ThresholdCategory,
-} from '@/lib/types';
+import { DefectClass, Threshold, ThresholdCategory } from '@/lib/types';
 
 import { Button } from './ui/button';
 
@@ -25,7 +21,9 @@ export default function ThresholdSettingTable({
   threshold,
   handdleUpdate,
 }: SettingsProps) {
-  const [modfifiedThreshold, setModifiedThreshold] = useState<Threshold>(JSON.parse(JSON.stringify(threshold)));
+  const [modfifiedThreshold, setModifiedThreshold] = useState<Threshold>(
+    JSON.parse(JSON.stringify(threshold)),
+  );
 
   const [checkboxState, setCheckboxState] = useState<CheckboxState>({
     length_cat3: threshold.setting.cat3.length > 0,
@@ -291,11 +289,11 @@ export default function ThresholdSettingTable({
             />
           </div> */}
             {renderCheckboxInput('to', 'length_cat3', 'cat3', 'length')}
-  
+
             {renderCheckboxInput('to', 'length_cat2c', 'cat2c', 'length')}
-  
+
             {renderCheckboxInput('to', 'length_cat2b', 'cat2b', 'length')}
-   
+
             {renderCheckboxInput('to', 'length_cat2a', 'cat2a', 'length')}
 
             {renderCheckboxInput('to', 'length_cat1', 'cat1', 'length')}
@@ -541,7 +539,6 @@ export default function ThresholdSettingTable({
             />
           </div>
           <div className="mb-4 ml-10 grid flex-1 grid-cols-5 items-center gap-4">
-
             {renderCheckboxInput('to', 'area_cat3', 'cat3', 'area')}
 
             {renderCheckboxInput('to', 'area_cat2c', 'cat2c', 'area')}

@@ -12,6 +12,8 @@ import {
   LoginData,
   Threshold,
   Alert,
+  InferenceModel,
+  EventSource,
 } from './types';
 
 const axiosInstance = axios.create({
@@ -275,4 +277,42 @@ export const updateEmail = async (
 export const deleteEmail = async (source: string, id: string): Promise<any> => {
   const response = await axiosInstance.delete(`/v1/alerts/emails/${id}`);
   return response.data;
+};
+
+export const getPresignedUploadUri = async (filename: string): Promise<any> => {
+  const queryParams = new URLSearchParams();
+  queryParams.append('filename', filename);
+  const response = await axiosInstance.get(
+    `/v1/s3/presignedUploadUri?${queryParams.toString()}`,
+  );
+  return response.data.data['uri'];
+};
+
+interface CreateInferenceData {
+  eventAt: string;
+  comment: string;
+}
+
+export const createInference = async (
+  source: EventSource,
+  data: CreateInferenceData,
+): Promise<InferenceModel> => {
+  const response = await axiosInstance.post(`/v1/inference/${source}`, data);
+  return response.data.data['inference'];
+};
+
+interface UpdateInferenceData {
+  videoFilename: string;
+}
+
+export const updateInference = async (
+  source: EventSource,
+  inferenceId: string,
+  data: UpdateInferenceData,
+): Promise<InferenceModel> => {
+  const response = await axiosInstance.patch(
+    `/v1/inference/${source}/${inferenceId}`,
+    data,
+  );
+  return response.data.data['inference'];
 };

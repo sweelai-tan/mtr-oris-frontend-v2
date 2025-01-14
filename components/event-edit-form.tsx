@@ -539,22 +539,47 @@ export default function EventEditForm({
       <div className="basis-1/3 border-l border-gray-800 bg-gray-900 p-4">
         <div className="space-y-2 text-sm">
           <div className="flex items-center justify-between pb-2">
-            <Image src={DateIcon} alt="Date" />
-            <div className="w-full pl-4 text-gray-400">{localEventAt}</div>
-          </div>
-
-          <div className="flex items-center justify-between pb-2">
             <Image src={DateIcon} alt="CarName" />
             <div className="w-full pl-4 text-gray-400">
               {modifiedEvent.carName}
             </div>
           </div>
 
+          <div className="flex items-center justify-between pb-2">
+            <Image src={DateIcon} alt="Date" />
+            <div className="w-full pl-4 text-gray-400">{localEventAt}</div>
+          </div>
+
           <div className="flex items-center gap-1 pb-2">
             <Image src={StatusIcon} alt="Status" />
             <div className="flex w-full flex-row items-center gap-x-2 pl-4">
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-              <span className="text-green-500">
+              <CheckCircle2
+                className={cn(
+                  'h-4 w-4',
+                  modifiedEvent.status === EventStatus.PENDING
+                    ? 'text-yellow-500'
+                    : '',
+                  modifiedEvent.status === EventStatus.VERIFIED
+                    ? 'text-green-500'
+                    : '',
+                  modifiedEvent.status === EventStatus.MODIFIED
+                    ? 'text-blue-500'
+                    : '',
+                )}
+              />
+              <span
+                className={cn(
+                  modifiedEvent.status === EventStatus.PENDING
+                    ? 'text-yellow-500'
+                    : '',
+                  modifiedEvent.status === EventStatus.VERIFIED
+                    ? 'text-green-500'
+                    : '',
+                  modifiedEvent.status === EventStatus.MODIFIED
+                    ? 'text-blue-500'
+                    : '',
+                )}
+              >
                 {statusTranslations[modifiedEvent.status]}
               </span>
             </div>
@@ -591,6 +616,22 @@ export default function EventEditForm({
 
           <div className="flex items-center justify-between gap-x-2">
             <Image src={ChainangeIcon} alt="Chainange" />
+            {/* <span className="text-gray-400 w-full pl-4">{chainage}</span> */}
+            <Input
+              type="number"
+              value={modifiedEvent.chainage}
+              onChange={(e) => {
+                setModifiedEvent({
+                  ...modifiedEvent,
+                  chainage: parseFloat(e.target.value),
+                });
+              }}
+            />
+            {/* <ChevronDown className="w-4 h-4 text-gray-400" /> */}
+          </div>
+
+          <div className="flex items-center justify-between gap-x-2">
+            <Image src={ChainangeIcon} alt="Chainange" />
             <Select
               defaultValue={modifiedEvent.position}
               onValueChange={(v: EventPosition) => {
@@ -613,22 +654,6 @@ export default function EventEditForm({
                 ))}
               </SelectContent>
             </Select>
-          </div>
-
-          <div className="flex items-center justify-between gap-x-2">
-            <Image src={ChainangeIcon} alt="Chainange" />
-            {/* <span className="text-gray-400 w-full pl-4">{chainage}</span> */}
-            <Input
-              type="number"
-              value={modifiedEvent.chainage}
-              onChange={(e) => {
-                setModifiedEvent({
-                  ...modifiedEvent,
-                  chainage: parseFloat(e.target.value),
-                });
-              }}
-            />
-            {/* <ChevronDown className="w-4 h-4 text-gray-400" /> */}
           </div>
 
           <div className="flex items-center justify-between gap-x-2">

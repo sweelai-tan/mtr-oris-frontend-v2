@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -40,7 +40,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     updateConfig({ user: null });
-  }, []);
+  }, [updateConfig]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,7 +61,7 @@ export default function LoginPage() {
       });
       router.push('/dashboard'); // Redirect to dashboard or home page
     } catch (error) {
-      if (axios.isAxiosError(error)) {
+      if (isAxiosError(error)) {
         // Handle Axios-specific errors
         if (error.response) {
           // Server responded with a status other than 2xx

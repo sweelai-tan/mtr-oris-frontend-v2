@@ -205,7 +205,7 @@ export const defectGroupList = [
 
 export const abnormalDefectList = [
   { value: DefectClass.ABNORMAL_RAIL_JOINT, label: 'Abnormal Rail Joint' },
-  { value: DefectClass.BROKEN_RAIL, label: 'Broken Rail' },
+  // { value: DefectClass.BROKEN_RAIL, label: 'Broken Rail' },
   { value: DefectClass.CONCRETE_CRACK, label: 'Concrete Crack' },
   { value: DefectClass.CORRUGATION, label: 'Corrugation' },
   { value: DefectClass.HEAD_CHECKING, label: 'Head Checking' },
@@ -356,4 +356,23 @@ export type LoginData = {
     role: string;
     id: string;
   };
+};
+
+export enum InferenceStatus {
+  PENDING = 'PENDING',
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+}
+
+export type InferenceModel = {
+  id: string;
+  source: EventSource;
+  comment?: string;
+  uploadedAt: string;
+  startAt?: string;
+  endAt?: string;
+  status: InferenceStatus;
+  aiModelId: string;
+  videoFilename: string;
+  totalEvents: number;
 };

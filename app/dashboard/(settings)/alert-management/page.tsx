@@ -38,7 +38,7 @@ export default function Page() {
 
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await getAlerts({
         dateFrom: dateRange.from,
@@ -88,7 +88,6 @@ export default function Page() {
     }
   };
 
-  
   // Calculate the start and end indices for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -104,11 +103,13 @@ export default function Page() {
       {/* date range section */}
       <div className="flex flex-row items-center justify-between gap-x-4">
         <div className="flex flex-row items-center gap-x-4">
-          {dateRange && <DateRangePicker
-            dateRange={dateRange}
-            ref={dateRangePickerRef}
-            type="single"
-          />}
+          {dateRange && (
+            <DateRangePicker
+              dateRange={dateRange}
+              ref={dateRangePickerRef}
+              type="single"
+            />
+          )}
           <Search
             className={cn('h-4 w-4 cursor-pointer')}
             // onClick={() => setDate(modifiedDate)}
@@ -126,17 +127,16 @@ export default function Page() {
       {error && <div className="text-center text-red-500">{error}</div>}
       {!isLoading && !error && (
         <div>
-          <CustomPagination 
+          <CustomPagination
             currentPage={currentPage}
             itemsPerPage={itemsPerPage}
             totalItems={alerts.length}
-            onItemsPerPageChange={(itemsPerPage) => setItemsPerPage(itemsPerPage)}
+            onItemsPerPageChange={(itemsPerPage) =>
+              setItemsPerPage(itemsPerPage)
+            }
             onCurrentPageChange={(page) => setCurrentPage(page)}
           />
-          <AlertTable 
-            alerts={currentAlerts}
-            startIndex={startIndex} 
-          />
+          <AlertTable alerts={currentAlerts} startIndex={startIndex} />
         </div>
       )}
     </div>

@@ -136,8 +136,6 @@ export const RectangleOnImage = forwardRef<
         context.scale(zoomLevel, zoomLevel);
         context.filter = `brightness(${brightness}) contrast(${contrast})`;
 
-        console.log(`brightness: ${brightness}, contrast: ${contrast}`);
-
         // // Draw the image on the canvas
         context.drawImage(image, 0, 0, newWidth, newHeight);
 
@@ -203,6 +201,7 @@ export const RectangleOnImage = forwardRef<
     annotation,
     brightness,
     contrast,
+    scaled,
   ]);
 
   const getResizeHandle = (x: number, y: number): string | null => {

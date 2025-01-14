@@ -1,16 +1,12 @@
 'use client';
 
-import React, {
-  forwardRef,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { MultiSelect } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectTrigger,
@@ -18,7 +14,8 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
-import { EventSource ,
+import {
+  EventSource,
   abnormalDefectList,
   DefectGroup,
   defectGroupList,
@@ -28,7 +25,6 @@ import { EventSource ,
   Sort,
 } from '@/lib/types';
 import { Label } from '@/components/ui/label';
-
 
 export type ChainageRange = {
   from: number | undefined;
@@ -180,7 +176,7 @@ export const FilterSection = forwardRef<
           {/* second row */}
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
             <div className="space-y-2">
-              <Label className="text-xs text-slate-50">Defect Category</Label>
+              <Label className="text-xs text-slate-50">Event Type</Label>
               <Select
                 onValueChange={(v) => {
                   setDefectClasses([]);
@@ -200,7 +196,7 @@ export const FilterSection = forwardRef<
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-xs text-slate-50">Defect Class</label>
+              <label className="text-xs text-slate-50">Event Class</label>
               <MultiSelect
                 className="border-slate-100 bg-slate-900 text-primary"
                 options={
@@ -227,27 +223,29 @@ export const FilterSection = forwardRef<
 
             {/* Sort */}
             <div className="space-y-2">
-            <Label className="text-xs text-slate-50">Sort Order</Label>
-            <RadioGroup
-              value={sort}
-              onValueChange={(v) => setSort(v as Sort)}
-            >
-              <div className='flex flex-row space-x-4 items-center pt-2'>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="DESC" id="r2" />
-                  <Label htmlFor="r2">Desc</Label>
+              <Label className="text-xs text-slate-50">Sort Order</Label>
+              <RadioGroup
+                value={sort}
+                onValueChange={(v) => setSort(v as Sort)}
+              >
+                <div className="flex flex-row items-center space-x-4 pt-2">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="DESC" id="r2" />
+                    <Label htmlFor="r2">Desc</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="ASC" id="r3" />
+                    <Label htmlFor="r3">Asc</Label>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="ASC" id="r3" />
-                  <Label htmlFor="r3">Asc</Label>
-                </div>
-                </div>
-            </RadioGroup>
+              </RadioGroup>
             </div>
           </div>
           {/* remark input */}
           <div className="max-w-md space-y-2">
-            <label className="text-xs text-slate-50">Remark</label>
+            <Label className="text-xs text-slate-50">
+              Remark (Containing Characters)
+            </Label>
             <Input
               placeholder="Enter your remark"
               className="border-slate-100 bg-slate-900"
