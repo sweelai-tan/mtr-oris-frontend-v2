@@ -200,7 +200,6 @@ export function AppSidebar() {
     source === EventSource.TML_EMAIL
       ? emailSidebarItems
       : videoSidebarItems;
-  console.log('sidebar sidebarItems:', sidebarItems);
 
   return (
     <Sidebar>
