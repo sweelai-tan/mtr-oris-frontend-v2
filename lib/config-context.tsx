@@ -1,8 +1,9 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import moment from 'moment-timezone';
 
-import { EventSource, LoginData } from '@/lib/types';
+import { DateRange, EventSource, LoginData } from '@/lib/types';
 
 export type Language = 'EN' | 'ZH';
 export interface Config {
@@ -13,6 +14,7 @@ export interface Config {
   source: EventSource | null;
   language: Language;
   user: LoginData | null;
+  dateRange: DateRange | undefined;
   updateConfig: (newConfig: Partial<Config>) => void;
 }
 
@@ -39,6 +41,14 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({
     user: null,
     updateConfig: (newConfig: Partial<Config>) => {
       setConfig((prevConfig) => ({ ...prevConfig, ...newConfig }));
+    },
+    dateRange: {
+      from: moment
+        .tz('Asia/Hong_Kong')
+        .subtract(1, 'day')
+        .set({ hour: 5, minute: 0 })
+        .toDate(),
+      to: moment.tz('Asia/Hong_Kong').set({ hour: 4, minute: 59 }).toDate(),
     },
   });
 
@@ -82,6 +92,10 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (newConfig.user) {
         localStorage.setItem('user', JSON.stringify(newConfig.user));
+      }
+
+      if (newConfig.dateRange) {
+        // localStorage.setItem('dateRange', JSON.stringify(newConfig.dateRange));
       }
       return updatedConfig;
     });

@@ -1,7 +1,6 @@
 'use client';
 
 import { Search, SlidersHorizontalIcon, X } from 'lucide-react';
-import moment from 'moment-timezone';
 import { useCallback, useEffect, useRef, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -10,7 +9,7 @@ import DateRangePicker, {
   DataRangePickerHandle,
 } from '@/components/date-range-picker';
 import DashboardTitle from '@/components/dashboard-title';
-import { DateRange, Event } from '@/lib/types';
+import { Event } from '@/lib/types';
 import EventStatusSection from '@/components/event-status-section';
 import CustomPagination from '@/components/custom-pagination';
 import { useConfig } from '@/lib/config-context';
@@ -37,7 +36,6 @@ interface StatusCount {
 function EventVerificationPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [isFilteringVisible, setIsFilteringVisible] = useState(false);
   const [statusCount, setStatusCount] = useState<StatusCount>({
     all: 0,
@@ -51,7 +49,6 @@ function EventVerificationPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [total, setTotal] = useState(0);
-  const { source } = useConfig();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
@@ -71,6 +68,7 @@ function EventVerificationPage() {
   const [sort, setSort] = useState<'ASC' | 'DESC'>('DESC');
   const [searchCounter, setSearchCounter] = useState(0);
   const [gridColumns, setGridColumns] = useState(2);
+  const { source, dateRange, updateConfig } = useConfig();
 
   const fetchEvents = useCallback(async () => {
     console.log(
@@ -191,15 +189,15 @@ function EventVerificationPage() {
   ]);
 
   useEffect(() => {
-    if (!dateRange) {
-      setDateRange({
-        from: moment
-          .tz('Asia/Hong_Kong')
-          .subtract(1, 'day')
-          .set({ hour: 5, minute: 0 })
-          .toDate(),
-        to: moment.tz('Asia/Hong_Kong').set({ hour: 4, minute: 59 }).toDate(),
-      });
+    if (dateRange) {
+      // setDateRange({
+      //   from: moment
+      //     .tz('Asia/Hong_Kong')
+      //     .subtract(1, 'day')
+      //     .set({ hour: 5, minute: 0 })
+      //     .toDate(),
+      //   to: moment.tz('Asia/Hong_Kong').set({ hour: 4, minute: 59 }).toDate(),
+      // });
       setFirstLoad(true);
     }
   }, [dateRange]);
@@ -255,7 +253,7 @@ function EventVerificationPage() {
 
       if (dateRangePickerRef.current) {
         const dateRange = dateRangePickerRef.current.getDateRange();
-        setDateRange(dateRange);
+        updateConfig({ dateRange: dateRange });
       }
 
       setChainageRange(chainageRange);
@@ -279,7 +277,7 @@ function EventVerificationPage() {
     if (dateRangePickerRef.current) {
       const dateRange = dateRangePickerRef.current.getDateRange();
       console.log(`search date range ${dateRange?.from} ~ ${dateRange?.to}`);
-      setDateRange(dateRange);
+      updateConfig({ dateRange: dateRange });
       setSearchCounter(searchCounter + 1);
     }
   };

@@ -2,7 +2,6 @@
 
 import { Search, SlidersHorizontalIcon } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import moment from 'moment-timezone';
 
 import { cn } from '@/lib/utils';
 import DateRangePicker, {
@@ -11,7 +10,7 @@ import DateRangePicker, {
 import DashboardTitle from '@/components/dashboard-title';
 import { useConfig } from '@/lib/config-context';
 import { getEvents } from '@/lib/api';
-import { DateRange, Event } from '@/lib/types';
+import { Event } from '@/lib/types';
 import EventTable from '@/components/event-table';
 
 import {
@@ -22,17 +21,8 @@ import {
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default function Page() {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  // const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [isFilteringVisible, setIsFilteringVisible] = useState(false);
-  // const [eventDirections, setEventDirections] = useState<string[]>([]);
-  // const [chainageRange, setChainageRange] = useState<ChainageRange>({
-  //   from: undefined,
-  //   to: undefined,
-  // });
-  // const [defectGroup, setDefectGroup] = useState<string | undefined>(undefined);
-  // const [defectClasses, setDefectClasses] = useState<string[]>([]);
-  // const [carName, setCarName] = useState<string | undefined>(undefined);
-  // const [remark, setRemark] = useState<string | undefined>(undefined);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [events, setEvents] = useState<Event[]>([]);
   const [originalEvents, setOriginalEvents] = useState<Event[]>([]);
@@ -55,7 +45,7 @@ export default function Page() {
   const [eventDirections, setEventDirections] = useState<string[]>([]);
   const [searchCount, setSearchCount] = useState(0);
 
-  const { source } = useConfig();
+  const { source, dateRange, updateConfig } = useConfig();
 
   const fetchEvents = useCallback(async () => {
     console.log(
@@ -133,15 +123,7 @@ export default function Page() {
   ]);
 
   useEffect(() => {
-    if (!dateRange) {
-      setDateRange({
-        from: moment
-          .tz('Asia/Hong_Kong')
-          .subtract(1, 'day')
-          .set({ hour: 5, minute: 0 })
-          .toDate(),
-        to: moment.tz('Asia/Hong_Kong').set({ hour: 4, minute: 59 }).toDate(),
-      });
+    if (dateRange) {
       setFirstLoad(true);
     }
   }, [dateRange]);
@@ -156,7 +138,7 @@ export default function Page() {
     if (dateRangePickerRef.current) {
       const dateRange = dateRangePickerRef.current.getDateRange();
       console.log(`search date range ${dateRange?.from} ~ ${dateRange?.to}`);
-      setDateRange(dateRange);
+      updateConfig({ dateRange: dateRange });
       setSearchCount(searchCount + 1);
     }
   };
