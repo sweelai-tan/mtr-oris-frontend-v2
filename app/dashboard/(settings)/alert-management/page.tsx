@@ -16,6 +16,7 @@ import { getAlerts } from '@/lib/api';
 import { useConfig } from '@/lib/config-context';
 import { Alert, DateRange } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import Error from '@/components/error';
 import CustomPagination from '@/components/custom-pagination';
 
 export default function Page() {
@@ -31,6 +32,10 @@ export default function Page() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const fetchAlerts = useCallback(async () => {
+    if (!source) {
+      return;
+    }
+
     if (!dateRange || !dateRange.from || !dateRange.to) {
       console.log('dateRange is not set');
       return;
@@ -124,7 +129,7 @@ export default function Page() {
         </Link>
       </div>
       {isLoading && <Loading />}
-      {error && <div className="text-center text-red-500">{error}</div>}
+      {/* {error && <Error>{error}</Error>} */}
       {!isLoading && !error && (
         <div>
           <CustomPagination

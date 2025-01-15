@@ -50,7 +50,7 @@ export default function AlertTable({ alerts, startIndex }: AlertTableProps) {
   };
 
   return (
-    <div className="rounded-lg border border-gray-800 bg-[#1A2027]">
+    <div className="rounded-lg border border-gray-800 bg-slate-900">
       <div className="flex items-center justify-between p-4">
         <h2 className="text-lg font-semibold text-white">Alerts</h2>
       </div>
