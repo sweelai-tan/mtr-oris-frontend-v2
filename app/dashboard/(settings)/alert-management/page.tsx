@@ -71,7 +71,7 @@ export default function Page() {
       });
       setFirstLoad(true);
     }
-  }, []);
+  }, [dateRange]);
 
   useEffect(() => {
     if (firstLoad) {

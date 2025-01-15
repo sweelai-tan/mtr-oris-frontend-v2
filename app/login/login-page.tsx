@@ -38,8 +38,10 @@ export default function LoginPage() {
   const { toast } = useToast();
   const { updateConfig } = useConfig();
 
+  // force to remove user from config
   useEffect(() => {
     updateConfig({ user: null });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({

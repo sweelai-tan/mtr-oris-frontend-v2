@@ -123,6 +123,7 @@ export default function EventEditForm({
         defects: JSON.parse(JSON.stringify(defects)),
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const localEventAt = moment(event.eventAt)

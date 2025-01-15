@@ -53,13 +53,13 @@ export default function Page() {
     to: undefined,
   });
   const [eventDirections, setEventDirections] = useState<string[]>([]);
-  const [searchCounter, setSearchCounter] = useState(0);
+  const [searchCount, setSearchCount] = useState(0);
 
   const { source } = useConfig();
 
   const fetchEvents = useCallback(async () => {
     console.log(
-      `Fetching events ${source} from ${dateRange?.from} to ${dateRange?.to}`,
+      `Fetching events ${source} from ${dateRange?.from} to ${dateRange?.to} (${searchCount})`,
     );
     if (!dateRange || !dateRange.from || !dateRange.to) {
       console.log('dateRange is not set');
@@ -124,7 +124,7 @@ export default function Page() {
     defectClasses,
     remark,
     statusFilter,
-    searchCounter,
+    searchCount,
   ]);
 
   useEffect(() => {
@@ -152,7 +152,7 @@ export default function Page() {
       const dateRange = dateRangePickerRef.current.getDateRange();
       console.log(`search date range ${dateRange?.from} ~ ${dateRange?.to}`);
       setDateRange(dateRange);
-      setSearchCounter(searchCounter + 1);
+      setSearchCount(searchCount + 1);
     }
   };
 

@@ -1,12 +1,20 @@
 module.exports = {
+  env: {
+    browser: true,
+    es2021: true,
+  },
   extends: [
     'next/core-web-vitals',
     'next/typescript',
     'plugin:@typescript-eslint/recommended',
-    // "plugin:prettier/recommended",
+    'plugin:prettier/recommended',
     'plugin:import/recommended',
   ],
-  plugins: ['@typescript-eslint/eslint-plugin', 'perfectionist'],
+  plugins: [
+    '@typescript-eslint/eslint-plugin',
+    'react-hooks',
+    // 'perfectionist'
+  ],
   ignorePatterns: ['.eslintrc.js', 'components/ui/*.tsx'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
@@ -27,6 +35,8 @@ module.exports = {
     //     ]
     //   },
     // ]
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
     'import/no-unresolved': ['error', { commonjs: true, amd: true }],
     'import/named': 'error',
     'import/namespace': 'error',

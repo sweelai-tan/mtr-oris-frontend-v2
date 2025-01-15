@@ -181,8 +181,8 @@ function EventVerificationPage() {
     defectClasses,
     remark,
     statusFilter,
-    searchCounter,
     sort,
+    searchCounter,
   ]);
 
   useEffect(() => {
@@ -197,7 +197,7 @@ function EventVerificationPage() {
       });
       setFirstLoad(true);
     }
-  }, []);
+  }, [dateRange]);
 
   useEffect(() => {
     if (firstLoad) {

@@ -3,7 +3,7 @@
 import { format } from 'date-fns';
 import moment from 'moment-timezone';
 import { CalendarIcon } from 'lucide-react';
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,7 @@ import { TimePicker } from './time-picker';
 import { Calendar } from './ui/calendar';
 
 interface DateRangePickerProps {
-  dateRange: DateRange | undefined;
+  dateRange: DateRange;
   type: 'single' | 'range';
 }
 
@@ -28,14 +28,14 @@ export interface DataRangePickerHandle {
 
 const DateRangePicker = forwardRef<DataRangePickerHandle, DateRangePickerProps>(
   (props, ref) => {
-    const [modifiedDateRange, setModifiedDateRange] = useState<
-      DateRange | undefined
-    >(undefined);
+    const [modifiedDateRange, setModifiedDateRange] = useState<DateRange>(
+      props.dateRange,
+    );
 
-    useEffect(() => {
-      if (modifiedDateRange) return;
-      setModifiedDateRange(props.dateRange);
-    }, []);
+    // useEffect(() => {
+    //   if (modifiedDateRange) return;
+    //   setModifiedDateRange(props.dateRange);
+    // }, []);
 
     const formatDateWithTime = (date: Date | undefined) => {
       if (!date) return '';

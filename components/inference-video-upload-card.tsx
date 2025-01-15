@@ -32,9 +32,6 @@ import {
   FormMessage,
 } from './ui/form';
 
-
-
-
 const formSchema = z.object({
   videoDate: z.string().nonempty('Video date is required'),
   remark: z.string().max(100, 'Remark must be 100 characters or less'),
@@ -212,7 +209,9 @@ export default function InferenceVideoUploadCard() {
                 <FormField
                   control={form.control}
                   name="file"
-                  render={({ field: { value, onChange, ...field } }) => ( // eslint-disable-line @typescript-eslint/no-unused-vars
+                  render={(
+                    { field: { value, onChange, ...field } }, // eslint-disable-line @typescript-eslint/no-unused-vars
+                  ) => (
                     <FormItem>
                       <FormLabel>File</FormLabel>
                       <FormControl>
