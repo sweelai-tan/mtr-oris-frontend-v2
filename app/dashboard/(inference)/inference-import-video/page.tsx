@@ -1,5 +1,8 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import DashboardTitle from '@/components/dashboard-title';
 import InferenceVideoUploadCard from '@/components/inference-video-upload-card';
 import {
@@ -11,8 +14,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 export default function Page() {
   const router = useRouter();

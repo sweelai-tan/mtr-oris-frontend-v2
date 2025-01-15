@@ -364,13 +364,13 @@ export enum InferenceStatus {
   FAILED = 'FAILED',
 }
 
-export type InferenceModel = {
+export type Inference = {
   id: string;
   source: EventSource;
-  comment?: string;
+  comment: string | '';
   uploadedAt: string;
-  startAt?: string;
-  endAt?: string;
+  startAt: string | '';
+  endAt: string | '';
   status: InferenceStatus;
   aiModelId: string;
   videoFilename: string;

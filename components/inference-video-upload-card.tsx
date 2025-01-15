@@ -68,7 +68,7 @@ export default function InferenceVideoUploadCard({
     if (isUploadSuccess) {
       onUploadSuccess();
     }
-  }, [isUploadSuccess]);
+  }, [isUploadSuccess, onUploadSuccess]);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -98,6 +98,10 @@ export default function InferenceVideoUploadCard({
   // };
 
   const onSubmit = async (data: FormData) => {
+    if (!source) {
+      return;
+    }
+
     try {
       // Handle form submission
       console.log(data);

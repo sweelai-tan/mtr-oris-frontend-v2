@@ -10,7 +10,7 @@ export interface Config {
     baseURL: string;
     timeout: number;
   };
-  source: EventSource;
+  source: EventSource | null;
   language: Language;
   user: LoginData | null;
   updateConfig: (newConfig: Partial<Config>) => void;
@@ -34,7 +34,7 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({
       baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://20.205.128.43',
       timeout: 5000,
     },
-    source: EventSource.SIL_EMAIL,
+    source: null,
     language: 'EN',
     user: null,
     updateConfig: (newConfig: Partial<Config>) => {

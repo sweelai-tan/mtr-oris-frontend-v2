@@ -12,7 +12,7 @@ import {
   LoginData,
   Threshold,
   Alert,
-  InferenceModel,
+  Inference,
   EventSource,
 } from './types';
 
@@ -296,7 +296,7 @@ interface CreateInferenceData {
 export const createInference = async (
   source: EventSource,
   data: CreateInferenceData,
-): Promise<InferenceModel> => {
+): Promise<Inference> => {
   const response = await axiosInstance.post(`/v1/inference/${source}`, data);
   return response.data.data['inference'];
 };
@@ -309,10 +309,17 @@ export const updateInference = async (
   source: EventSource,
   inferenceId: string,
   data: UpdateInferenceData,
-): Promise<InferenceModel> => {
+): Promise<Inference> => {
   const response = await axiosInstance.patch(
     `/v1/inference/${source}/${inferenceId}`,
     data,
   );
   return response.data.data['inference'];
+};
+
+export const getInferences = async (
+  source: EventSource,
+): Promise<Inference[]> => {
+  const response = await axiosInstance.get(`/v1/inference/${source}`);
+  return response.data.data['inferences'];
 };
