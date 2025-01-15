@@ -120,6 +120,7 @@ const DateRangePicker = forwardRef<DataRangePickerHandle, DateRangePickerProps>(
                 <Calendar
                   initialFocus
                   mode="range"
+                  min={2}
                   defaultMonth={modifiedDateRange?.from}
                   selected={modifiedDateRange}
                   onSelect={(range) => {
