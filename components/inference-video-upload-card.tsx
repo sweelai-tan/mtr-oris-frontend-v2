@@ -4,7 +4,7 @@ import { Info, Upload } from 'lucide-react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import moment from 'moment-timezone';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
@@ -31,6 +31,7 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
+import { Progress } from './ui/progress';
 
 const formSchema = z.object({
   videoDate: z.string().nonempty('Video date is required'),
@@ -49,10 +50,25 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function InferenceVideoUploadCard() {
+interface InferenceVideoUploadCardProps {
+  onUploadSuccess: () => void;
+}
+
+export default function InferenceVideoUploadCard({
+  onUploadSuccess,
+}: InferenceVideoUploadCardProps) {
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isUploadSuccess, setIsUploadSuccess] = useState(false);
   const { source } = useConfig();
+
+  useEffect(() => {
+    if (isUploadSuccess) {
+      onUploadSuccess();
+    }
+  }, [isUploadSuccess]);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -67,12 +83,28 @@ export default function InferenceVideoUploadCard() {
     return filename.split('.').pop();
   };
 
+  // const simulateUpload = () => {
+  //   return new Promise<void>((resolve) => {
+  //     let progress = 0;
+  //     const interval = setInterval(() => {
+  //       progress += 10;
+  //       setUploadProgress(progress);
+  //       if (progress >= 100) {
+  //         clearInterval(interval);
+  //         resolve();
+  //       }
+  //     }, 500);
+  //   });
+  // };
+
   const onSubmit = async (data: FormData) => {
     try {
       // Handle form submission
       console.log(data);
       const hktMoment = moment.tz(data.videoDate, 'Asia/Hong_Kong');
       const utcMoment = hktMoment.clone().utc();
+
+      setIsUploading(true);
 
       const inference = await createInference(source, {
         eventAt: utcMoment.toISOString(),
@@ -85,14 +117,20 @@ export default function InferenceVideoUploadCard() {
       const filename = `${inference.id}_${source}_${data.videoDate}.${getFileExtension(data.file.name)}`;
       const presignedUploadUri = await getPresignedUploadUri(filename);
 
-      // if (data.file) {
       const uploadResponse = await axios.put(presignedUploadUri, data.file, {
         headers: {
           'Content-Type': data.file.type,
         },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            setUploadProgress(
+              Math.round((progressEvent.loaded * 100) / progressEvent.total),
+            );
+          }
+        },
       });
 
-      if (uploadResponse.status !== 200) {
+      if (uploadResponse.status === 200) {
         const inference2 = await updateInference(source, inference.id, {
           videoFilename: filename,
         });
@@ -103,7 +141,17 @@ export default function InferenceVideoUploadCard() {
           title: 'Upload successful',
           description: 'The video has been uploaded successfully.',
         });
+
+        setIsUploadSuccess(true);
+        return;
       }
+
+      toast({
+        title: 'Upload failed',
+        description: 'An error occurred while uploading the video.',
+        variant: 'destructive',
+      });
+      // await simulateUpload();
     } catch (error) {
       console.error(error);
 
@@ -112,6 +160,9 @@ export default function InferenceVideoUploadCard() {
         description: 'An error occurred while uploading the video.',
         variant: 'destructive',
       });
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -163,27 +214,31 @@ export default function InferenceVideoUploadCard() {
                 </div>
 
                 {/* date */}
-                <FormField
-                  control={form.control}
-                  name="videoDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Video date</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          className="mt-1 border-slate-700 bg-slate-800 text-slate-200"
-                          placeholder="DD/MM/YYYY"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-red-400" />
-                    </FormItem>
-                  )}
-                />
+                <div className="max-w-sm">
+                  <FormField
+                    disabled={isUploading}
+                    control={form.control}
+                    name="videoDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Video date</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="date"
+                            className="mt-1 border-slate-700 bg-slate-800 text-slate-200"
+                            placeholder="DD/MM/YYYY"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 {/* remark */}
                 <FormField
+                  disabled={isUploading}
                   control={form.control}
                   name="remark"
                   render={({ field }) => (
@@ -207,6 +262,7 @@ export default function InferenceVideoUploadCard() {
 
                 {/* file */}
                 <FormField
+                  disabled={isUploading}
                   control={form.control}
                   name="file"
                   render={(
@@ -251,12 +307,24 @@ export default function InferenceVideoUploadCard() {
                   )}
                 />
 
-                <Button
-                  type="submit"
-                  className="bg-cyan-500 text-white hover:bg-cyan-600"
-                >
-                  Submit
-                </Button>
+                {isUploading && (
+                  <div className="space-y-2">
+                    <Progress value={uploadProgress} />
+                    <p className="text-center text-sm text-slate-400">
+                      Uploading: {uploadProgress}%
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <Button
+                    type="submit"
+                    className="bg-cyan-500 text-white hover:bg-cyan-600"
+                    disabled={isUploading}
+                  >
+                    {isUploading ? 'Uploading...' : 'Submit'}
+                  </Button>
+                </div>
               </div>
             </form>
           </Form>
