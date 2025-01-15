@@ -119,8 +119,10 @@ export default function CustomPagination({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="10">10</SelectItem>
-            <SelectItem value="15">20</SelectItem>
-            <SelectItem value="30">50</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+            <SelectItem value="30">30</SelectItem>
+            <SelectItem value="40">40</SelectItem>
+            <SelectItem value="50">50</SelectItem>
           </SelectContent>
         </Select>
         <div className="ml-2 flex items-center space-x-2">
