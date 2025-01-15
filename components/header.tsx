@@ -32,9 +32,9 @@ export default function Header() {
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="h-8 border-gray-700 text-cyan-500 hover:bg-[#234454]"
+              className="h-8 border-gray-700 font-semibold text-cyan-500 hover:text-cyan-600"
             >
-              {language === 'EN' ? 'English' : '中文'}
+              {language === 'EN' ? 'EN' : '中文'}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
