@@ -40,7 +40,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     updateConfig({ user: null });
-  }, [updateConfig]);
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
