@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   ArrowRight,
+  Check,
   CheckCircle2,
   ChevronDown,
   Moon,
@@ -103,7 +104,7 @@ export default function EventEditForm({
   };
 
   useEffect(() => {
-    console.log('event:', event);
+    // console.log('event:', event);
     if (modifiedEvent === null || event.id !== modifiedEvent.id) {
       // const aDefect = event.defects.length === 0
       //   ? event.sysDefects.length === 0
@@ -297,6 +298,36 @@ export default function EventEditForm({
           variant: 'destructive',
         });
       }
+    }
+  };
+
+  const handleRemarkSave = async () => {
+    if (modifiedEvent === null || originalEvent === null) {
+      return;
+    }
+
+    try {
+      // const status =
+      //   modifiedEvent.status === EventStatus.PENDING
+      //     ? EventStatus.VERIFIED
+      //     : modifiedEvent.status;
+
+      await updateEvent(modifiedEvent.source, modifiedEvent.id, {
+        // status: status,
+        remark: modifiedEvent.remark,
+      });
+
+      toast({
+        title: 'Update event',
+        description: 'Event updated successfully.',
+      });
+    } catch (error) {
+      console.error('Error updating event:', error);
+      toast({
+        title: 'Update event',
+        description: 'Event updated failed.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -752,16 +783,26 @@ export default function EventEditForm({
 
           <div className="flex flex-col pt-4">
             <span className="w-full pb-2 pl-4 text-gray-400">Remarks</span>
-            <Textarea
-              className="h-16 w-full resize-none rounded-md border-gray-800 bg-gray-800 p-2 text-sm text-gray-300"
-              value={modifiedEvent.remark}
-              onChange={(e) => {
-                setModifiedEvent({
-                  ...modifiedEvent,
-                  remark: e.target.value,
-                });
-              }}
-            />
+            <div className="relative">
+              <Textarea
+                className="h-16 w-full resize-none rounded-md border-gray-800 bg-gray-800 p-2 text-sm text-gray-300"
+                value={modifiedEvent.remark}
+                onChange={(e) => {
+                  setModifiedEvent({
+                    ...modifiedEvent,
+                    remark: e.target.value,
+                  });
+                }}
+              />
+              <Button
+                size="icon"
+                variant="ghost"
+                className="absolute bottom-2 right-2"
+                onClick={handleRemarkSave}
+              >
+                <Check className="h-4 w-4 text-gray-400" />
+              </Button>
+            </div>
           </div>
 
           <div className="flex gap-3 border-t border-gray-800 p-4">

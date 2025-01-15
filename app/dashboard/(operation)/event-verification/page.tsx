@@ -80,6 +80,10 @@ function EventVerificationPage() {
       return;
     }
 
+    if (!source) {
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
@@ -117,6 +121,7 @@ function EventVerificationPage() {
         chainageTo: chainageRange.to,
         defectGroup: defectGroup,
         defectClasses: defectClasses,
+        remark,
       });
 
       // const originalEvents: Event[] = responseEvents.data.data['events'];
@@ -307,9 +312,13 @@ function EventVerificationPage() {
         <div className="flex flex-row justify-between">
           <DashboardTitle>Edit Event</DashboardTitle>
           {/* add back button */}
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <X className="h-4 w-4" />
-          </Button>
+          {selectedEvent ? (
+            <Button variant="ghost" size="icon" onClick={() => router.back()}>
+              <X className="h-4 w-4" />
+            </Button>
+          ) : (
+            ''
+          )}
         </div>
         <div>
           {selectedEvent ? (
@@ -321,7 +330,17 @@ function EventVerificationPage() {
               onEventUpdated={updateEventById}
             />
           ) : (
-            <div className="text-center text-red-500">Event not found</div>
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <div className="text-center text-red-500">Event not found</div>
+              <Button
+                variant="secondary"
+                // size="icon"
+                onClick={() => router.push('/dashboard/event-verification')}
+                className="bg-cyan-500 hover:bg-cyan-600"
+              >
+                Back
+              </Button>
+            </div>
           )}
         </div>
       </div>
@@ -373,7 +392,7 @@ function EventVerificationPage() {
       </div>
 
       {/* filter section */}
-      {isFilteringVisible && (
+      {isFilteringVisible && source && (
         <FilterSection
           source={source}
           ref={filterSectionRef}
@@ -382,7 +401,7 @@ function EventVerificationPage() {
       )}
 
       {isLoading ? <Loading /> : null}
-      {error ? <Error message={error} /> : null}
+      {error ? <Error>{error}</Error> : null}
 
       {!isLoading && !error && (
         <>

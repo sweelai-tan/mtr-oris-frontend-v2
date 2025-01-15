@@ -99,6 +99,7 @@ export const FilterSection = forwardRef<
     setDefectClasses([]);
     setRemark(undefined);
   };
+
   return (
     <Card className="border-slate-800 bg-slate-900 p-6">
       <div className="space-y-6">

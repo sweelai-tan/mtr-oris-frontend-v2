@@ -122,76 +122,6 @@ export default function EventCard(params: Event) {
   };
 
   const handleSave = async () => {
-    // console.log("Event:", event);
-    // console.log("Modified Event:", modifiedEvent);
-    // if (
-    //   modifiedEvent.status === EventStatus.PENDING &&
-    //   event.status !== EventStatus.PENDING
-    // ) {
-    //   // posible reset
-    //   const originalStatus = event.status;
-    //   const originalRemark = modifiedEvent.remark;
-    //   event.status = EventStatus.PENDING;
-    //   modifiedEvent.remark = event.remark;
-
-    //   const hasEventChange =
-    //     JSON.stringify(event) !== JSON.stringify(modifiedEvent);
-    //   event.status = originalStatus;
-    //   modifiedEvent.remark = originalRemark;
-
-    //   if (hasEventChange) {
-    //     try {
-    //       await updateEvent(modifiedEvent.source, modifiedEvent.id, {
-    //         status: EventStatus.MODIFIED,
-    //         position: modifiedEvent.position,
-    //         chainage: modifiedEvent.chainage,
-    //         defects: modifiedEvent.defects,
-    //         remark: modifiedEvent.remark,
-    //       });
-
-    //       setModifiedEvent({
-    //         ...modifiedEvent,
-    //         status: EventStatus.MODIFIED,
-    //       });
-
-    //       toast({
-    //         title: 'Update event',
-    //         description: 'Event updated successfully.',
-    //       });
-    //     } catch (error) {
-    //       console.error('Error updating event:', error);
-    //       toast({
-    //         title: 'Update event',
-    //         description: 'Event updated failed.',
-    //         variant: 'destructive',
-    //       });
-    //     }
-    //   } else {
-    //     try {
-    //       await updateEvent(modifiedEvent.source, modifiedEvent.id, {
-    //         status: EventStatus.PENDING,
-    //         position: modifiedEvent.position,
-    //         chainage: modifiedEvent.chainage,
-    //         defects: modifiedEvent.defects,
-    //         remark: modifiedEvent.remark,
-    //       });
-
-    //       toast({
-    //         title: 'Update event',
-    //         description: 'Event updated successfully.',
-    //       });
-    //     } catch (error) {
-    //       console.error('Error updating event:', error);
-    //       toast({
-    //         title: 'Update event',
-    //         description: 'Event updated failed.',
-    //         variant: 'destructive',
-    //       });
-    //     }
-    //   }
-
-    //   return;
-    // }
     const aModifiedEvent = {
       ...modifiedEvent,
       status: event.status,
@@ -262,13 +192,13 @@ export default function EventCard(params: Event) {
 
   const handleRemarkSave = async () => {
     try {
-      const status =
-        modifiedEvent.status === EventStatus.PENDING
-          ? EventStatus.VERIFIED
-          : modifiedEvent.status;
+      // const status =
+      //   modifiedEvent.status === EventStatus.PENDING
+      //     ? EventStatus.VERIFIED
+      //     : modifiedEvent.status;
 
       await updateEvent(modifiedEvent.source, modifiedEvent.id, {
-        status: status,
+        // status: status,
         remark: modifiedEvent.remark,
       });
 

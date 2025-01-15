@@ -66,7 +66,6 @@ export const RectangleOnImage = forwardRef<
   const [resizeHandle, setResizeHandle] = useState<string | null>(null);
   const [annotation, setAnnotation] = useState<Annotation | null>(null);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-  // const [scale, setScale] = useState<Scale>({ x: 1, y: 1 });
   const [scaled, setScaled] = useState<Scale>({ x: 1, y: 1 });
   const [imageWH, setImageWH] = useState({ width: 0, height: 0 });
 
@@ -246,6 +245,7 @@ export const RectangleOnImage = forwardRef<
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!editable) return;
+    if (zoomLevel !== 1) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;

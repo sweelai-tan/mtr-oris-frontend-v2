@@ -30,6 +30,8 @@ export default function EmailTable({ emails }: { emails: Email[] }) {
   }, [emails]);
 
   const addNewEntry = () => {
+    if (!source) return;
+
     const newEntry: Email = {
       name: '',
       email: '',
@@ -58,6 +60,8 @@ export default function EmailTable({ emails }: { emails: Email[] }) {
       return;
     }
 
+    if (!source) return;
+
     try {
       const response = await addEmail(source, email as Email);
       if (response) {
@@ -82,6 +86,7 @@ export default function EmailTable({ emails }: { emails: Email[] }) {
   };
 
   const updateEntry = async (id: string) => {
+    if (!source) return;
     // In a real application, this would make an API call
     // find email by id
     const email = modfifiedEmails.find((email) => email.id === id);
@@ -99,6 +104,8 @@ export default function EmailTable({ emails }: { emails: Email[] }) {
   };
 
   const deleteEntry = async (id: string) => {
+    if (!source) return;
+
     try {
       const response = await deleteEmail(source, id);
       if (response) {

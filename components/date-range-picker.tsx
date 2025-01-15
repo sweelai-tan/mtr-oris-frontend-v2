@@ -49,7 +49,6 @@ const DateRangePicker = forwardRef<DataRangePickerHandle, DateRangePickerProps>(
       const newFromDate = new Date(modifiedDateRange.from);
       newFromDate.setHours(isPM ? parseInt(hours) + 12 : parseInt(hours));
       newFromDate.setMinutes(parseInt(minutes));
-
       if (
         newFromDate.getHours() === modifiedDateRange.from?.getHours() &&
         newFromDate.getMinutes() === modifiedDateRange.from?.getMinutes()
@@ -66,7 +65,6 @@ const DateRangePicker = forwardRef<DataRangePickerHandle, DateRangePickerProps>(
       const newToDate = new Date(modifiedDateRange.to);
       newToDate.setHours(isPM ? parseInt(hours) + 12 : parseInt(hours));
       newToDate.setMinutes(parseInt(minutes));
-
       if (
         newToDate.getHours() === modifiedDateRange.to?.getHours() &&
         newToDate.getMinutes() === modifiedDateRange.to?.getMinutes()
@@ -124,9 +122,42 @@ const DateRangePicker = forwardRef<DataRangePickerHandle, DateRangePickerProps>(
                   mode="range"
                   defaultMonth={modifiedDateRange?.from}
                   selected={modifiedDateRange}
-                  onSelect={(range) =>
-                    setModifiedDateRange({ from: range?.from, to: range?.to })
-                  }
+                  onSelect={(range) => {
+                    if (modifiedDateRange?.from === undefined && range?.from) {
+                      range.from.setHours(5, 0, 0, 0);
+                    }
+                    if (modifiedDateRange?.from && range?.to) {
+                      range.from?.setHours(
+                        modifiedDateRange.from.getHours(),
+                        modifiedDateRange.from.getMinutes(),
+                        59,
+                        999,
+                      );
+                      if (modifiedDateRange?.to === undefined) {
+                        if (
+                          modifiedDateRange.from.getDate() ===
+                            range.to.getDate() &&
+                          modifiedDateRange.from.getMonth() ===
+                            range.to.getMonth() &&
+                          modifiedDateRange.from.getFullYear() ===
+                            range.to.getFullYear()
+                        ) {
+                          range.to.setHours(23, 59, 59, 999);
+                        } else {
+                          range.to.setHours(4, 59, 59, 999);
+                        }
+                      } else {
+                        range.to.setHours(
+                          modifiedDateRange.to.getHours(),
+                          modifiedDateRange.to.getMinutes(),
+                          59,
+                          999,
+                        );
+                      }
+                    }
+
+                    setModifiedDateRange({ from: range?.from, to: range?.to });
+                  }}
                   numberOfMonths={1}
                 />
               </div>

@@ -33,6 +33,8 @@ export default function Page() {
 
   const fetchThresholds = useCallback(() => {
     const fetchData = async () => {
+      if (!source) return;
+
       setIsLoading(true);
       setError(null);
 
@@ -60,6 +62,8 @@ export default function Page() {
   }, []);
 
   const handdleUpdate = async (threshold: Threshold) => {
+    if (!source) return;
+
     try {
       const data = await updateThreshold(source, threshold);
       setThresholds((prev) =>
@@ -98,7 +102,7 @@ export default function Page() {
     <div className="flex h-screen flex-col space-y-6">
       <DashboardTitle>Defect Category Threshold</DashboardTitle>
       {isLoading && <Loading />}
-      {error && <Error message={error} />}
+      {error && <Error>{error}</Error>}
       {!isLoading && !error && (
         <Tabs defaultValue="abnormal" className="mb-4 space-y-6">
           <TabsList className="bg-transparent">

@@ -19,6 +19,8 @@ export default function Page() {
   const { source } = useConfig();
 
   const fetchEmails = useCallback(async () => {
+    if (!source) return;
+
     setIsLoading(true);
     setError(null);
     try {

@@ -65,6 +65,11 @@ export default function Page() {
       console.log('dateRange is not set');
       return;
     }
+
+    if (!source) {
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     try {
@@ -202,7 +207,7 @@ export default function Page() {
       </div>
 
       {/* filter section */}
-      {isFilteringVisible && (
+      {isFilteringVisible && source && (
         <FilterSection
           source={source}
           ref={filterSectionRef}

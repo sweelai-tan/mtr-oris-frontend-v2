@@ -115,6 +115,7 @@ interface GetStatusCountParams {
   chainageTo: number | undefined;
   defectGroup?: string;
   defectClasses: string[] | undefined;
+  remark?: string;
 }
 
 export const getStatusCount = async (
@@ -129,6 +130,7 @@ export const getStatusCount = async (
     chainageTo,
     defectGroup,
     defectClasses,
+    remark,
   } = params;
 
   const timeZone = 'Asia/Hong_Kong';
@@ -154,6 +156,7 @@ export const getStatusCount = async (
   if (defectClasses && defectClasses.length > 0) {
     queryParams.append('classes', defectClasses.join(','));
   }
+  if (remark) queryParams.append('remark', remark);
 
   const response = await axiosInstance.get(
     `/v1/events/${source}/status-aggregate?${queryParams.toString()}`,

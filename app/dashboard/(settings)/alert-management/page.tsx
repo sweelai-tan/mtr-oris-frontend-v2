@@ -55,9 +55,8 @@ export default function Page() {
       setAlerts(data);
       setCurrentPage(1);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'An unknown error occurred',
-      );
+      console.error(err);
+      setError('An unknown error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -129,7 +128,7 @@ export default function Page() {
         </Link>
       </div>
       {isLoading && <Loading />}
-      {/* {error && <Error>{error}</Error>} */}
+      {error && <Error>{error}</Error>}
       {!isLoading && !error && (
         <div>
           <CustomPagination
