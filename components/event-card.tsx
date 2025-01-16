@@ -55,6 +55,12 @@ import { RectangleOnImage } from './rectangle-on-image';
 import { Separator } from './ui/separator';
 import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip';
 
 export default function EventCard(params: Event) {
   const localEventAt = moment(params.eventAt)
@@ -113,9 +119,9 @@ export default function EventCard(params: Event) {
   ) => {
     try {
       const response = await patchEvent(source, id, patchEventData);
-      console.log('Event updated successfully:', response.data);
+      console.log('Event updated successfully:', response);
 
-      return response.data;
+      return response;
     } catch (error) {
       throw error;
     }
@@ -137,6 +143,7 @@ export default function EventCard(params: Event) {
       try {
         await updateEvent(modifiedEvent.source, modifiedEvent.id, {
           status: EventStatus.MODIFIED,
+          direction: modifiedEvent.direction,
           position: modifiedEvent.position,
           chainage: modifiedEvent.chainage,
           defects: modifiedEvent.defects,
@@ -288,7 +295,16 @@ export default function EventCard(params: Event) {
                 <div className="space-y-2 text-sm">
                   {/* car name */}
                   <div className="flex items-center justify-between pb-2">
-                    <Image src={DateIcon} alt="Date" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Image src={DateIcon} alt="Date" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Car Name</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <div className="w-full pl-4 text-gray-400">
                       {event.carName}
                     </div>
@@ -296,7 +312,16 @@ export default function EventCard(params: Event) {
 
                   {/* date  */}
                   <div className="flex items-center justify-between pb-2">
-                    <Image src={DateIcon} alt="Date" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Image src={DateIcon} alt="Date" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Event Date</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <div className="w-full pl-4 text-gray-400">
                       {localEventAt}
                     </div>
@@ -304,7 +329,16 @@ export default function EventCard(params: Event) {
 
                   {/* status */}
                   <div className="flex items-center gap-1 pb-2">
-                    <Image src={StatusIcon} alt="Status" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Image src={StatusIcon} alt="Status" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Status</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <div className="flex w-full flex-row items-center gap-x-2 pl-4">
                       <CheckCircle2
                         className={cn(
@@ -343,7 +377,16 @@ export default function EventCard(params: Event) {
 
                   {/* direction */}
                   <div className="flex items-center justify-between gap-x-2">
-                    <Image src={DirectionIcon} alt="Direction" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Image src={DirectionIcon} alt="Direction" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Track</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <Select
                       defaultValue={modifiedEvent.direction}
                       onValueChange={(value: EventDirection) => {
@@ -370,7 +413,16 @@ export default function EventCard(params: Event) {
 
                   {/* chainage */}
                   <div className="flex items-center justify-between gap-x-2">
-                    <Image src={ChainangeIcon} alt="Chainange" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Image src={ChainangeIcon} alt="Chainange" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Chainage</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     {/* <span className="text-gray-400 w-full pl-4">{chainage}</span> */}
                     <Input
                       type="number"
@@ -386,7 +438,16 @@ export default function EventCard(params: Event) {
                   </div>
 
                   <div className="flex items-center justify-between gap-x-2">
-                    <Image src={ChainangeIcon} alt="Chainange" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Image src={ChainangeIcon} alt="Chainange" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Position</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <Select
                       defaultValue={modifiedEvent.position}
                       onValueChange={(v: EventPosition) => {
@@ -412,7 +473,16 @@ export default function EventCard(params: Event) {
                   </div>
 
                   <div className="flex items-center justify-between gap-x-2">
-                    <Image src={ClassIcon} alt="Class" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Image src={ClassIcon} alt="Class" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Event Type</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     {/* <span className="text-gray-400 w-full pl-4">
                       {sysDefects.length === 0
                         ? groupTranslations[DefectGroup.UNKNOWN]
@@ -454,7 +524,16 @@ export default function EventCard(params: Event) {
                   </div>
 
                   <div className="flex items-center justify-between gap-x-2">
-                    <Image src={ClassIcon} alt="Class" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Image src={ClassIcon} alt="Class" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Event Class</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     {/* <span className="text-gray-400 w-full pl-4">
                       {sysDefects.length === 0
                         ? classTranslations[DefectClass.UNKNOWN]

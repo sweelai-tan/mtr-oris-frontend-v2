@@ -9,7 +9,7 @@ import DateRangePicker, {
   DataRangePickerHandle,
 } from '@/components/date-range-picker';
 import DashboardTitle from '@/components/dashboard-title';
-import { Event } from '@/lib/types';
+import { Event, Sort } from '@/lib/types';
 import EventStatusSection from '@/components/event-status-section';
 import CustomPagination from '@/components/custom-pagination';
 import { useConfig } from '@/lib/config-context';
@@ -19,6 +19,8 @@ import { Button } from '@/components/ui/button';
 import EventEditForm from '@/components/event-edit-form';
 import Loading from '@/components/loading';
 import Error from '@/components/error';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 import {
   FilterSection,
@@ -109,17 +111,22 @@ function EventVerificationPage() {
         sort,
       });
 
+      // const responseStatusCount = await getStatusCount({
+      //   source,
+      //   dateFrom: dateRange.from,
+      //   dateTo: dateRange.to,
+      //   carName: carName,
+      //   directions: eventDirections,
+      //   chainageFrom: chainageRange.from,
+      //   chainageTo: chainageRange.to,
+      //   defectGroup: defectGroup,
+      //   defectClasses: defectClasses,
+      //   remark,
+      // });
       const responseStatusCount = await getStatusCount({
         source,
         dateFrom: dateRange.from,
         dateTo: dateRange.to,
-        carName: carName,
-        directions: eventDirections,
-        chainageFrom: chainageRange.from,
-        chainageTo: chainageRange.to,
-        defectGroup: defectGroup,
-        defectClasses: defectClasses,
-        remark,
       });
 
       // const originalEvents: Event[] = responseEvents.data.data['events'];
@@ -139,13 +146,27 @@ function EventVerificationPage() {
 
       // console.log(response.data.data);
       // setOriginalEvents(originalEvents);
+      const totalPending =
+        responseStatusCount.data.data['statusAggregate']['PENDING'];
+      const totalVerified =
+        responseStatusCount.data.data['statusAggregate']['VERIFIED'];
+      const totalModified =
+        responseStatusCount.data.data['statusAggregate']['MODIFIED'];
       const total =
         responseStatusCount.data.data['statusAggregate']['PENDING'] +
         responseStatusCount.data.data['statusAggregate']['VERIFIED'] +
         responseStatusCount.data.data['statusAggregate']['MODIFIED'];
-      const events = responseEvents.data.data['events'];
+      const events = responseEvents;
       setEvents(events);
-      setTotal(total);
+      setTotal(
+        statusFilter === 'PENDING'
+          ? totalPending
+          : statusFilter === 'VERIFIED'
+            ? totalVerified
+            : statusFilter === 'MODIFIED'
+              ? totalModified
+              : total,
+      );
 
       setStatusCount({
         all: total,
@@ -163,7 +184,7 @@ function EventVerificationPage() {
     } catch (err) {
       console.error(err);
       setError(
-        (err as any) instanceof Error
+        (err as unknown) instanceof Error
           ? (err as Error).message
           : 'An unknown error occurred',
       );
@@ -215,8 +236,8 @@ function EventVerificationPage() {
       console.log(`zoomLevel`, zoomLevel);
       console.log(`window.innerWidth`, window.innerWidth);
       console.log(`window.innerHeight`, window.innerHeight);
-      setGridColumnsBaseOnInnerWidth(window.innerWidth);
-      // setGridColumnsBaseOnZooomLevel(zoomLevel);
+      // setGridColumnsBaseOnInnerWidth(window.innerWidth);
+      setGridColumnsBaseOnZooomLevel(zoomLevel);
     };
     window.addEventListener('resize', handleResize);
 
@@ -227,19 +248,29 @@ function EventVerificationPage() {
     };
   }, []);
 
-  const setGridColumnsBaseOnInnerWidth = (width: number) => {
-    if (width <= 960) {
-      setGridColumns(1);
-    } else if (width > 960 && width <= 1280) {
-      setGridColumns(2);
-    } else if (width > 1280 && width <= 1600) {
-      setGridColumns(3);
-    } else if (width > 1600 && width <= 1920) {
-      setGridColumns(4);
-    } else {
+  const setGridColumnsBaseOnZooomLevel = (zoomLevel: number) => {
+    if (zoomLevel <= 50) {
       setGridColumns(5);
+    } else if (zoomLevel > 150) {
+      setGridColumns(1);
+    } else {
+      setGridColumns(2);
     }
   };
+
+  // const setGridColumnsBaseOnInnerWidth = (width: number) => {
+  //   if (width <= 960) {
+  //     setGridColumns(1);
+  //   } else if (width > 960 && width <= 1280) {
+  //     setGridColumns(2);
+  //   } else if (width > 1280 && width <= 1600) {
+  //     setGridColumns(3);
+  //   } else if (width > 1600 && width <= 1920) {
+  //     setGridColumns(4);
+  //   } else {
+  //     setGridColumns(5);
+  //   }
+  // };
 
   const handleFilterApply = () => {
     if (filterSectionRef.current) {
@@ -249,7 +280,6 @@ function EventVerificationPage() {
       const defectGroup = filterSectionRef.current.getDefectGroup();
       const defectClasses = filterSectionRef.current.getDefectClasses();
       const remark = filterSectionRef.current.getRemark();
-      const sort = filterSectionRef.current.getSort();
 
       if (dateRangePickerRef.current) {
         const dateRange = dateRangePickerRef.current.getDateRange();
@@ -346,6 +376,7 @@ function EventVerificationPage() {
   }
 
   console.log(`page: dateRange ${dateRange?.from} ~ ${dateRange?.to}`);
+  console.log(`page: gridColumns ${gridColumns}`);
 
   return (
     <div
@@ -355,7 +386,7 @@ function EventVerificationPage() {
     >
       <DashboardTitle>Event Verification</DashboardTitle>
       <div className="flex flex-row items-center gap-x-4">
-        {dateRange && (
+        {dateRange && dateRange.from && dateRange.to && (
           <DateRangePicker
             dateRange={dateRange}
             type="range"
@@ -368,6 +399,22 @@ function EventVerificationPage() {
         >
           <Search className="h-4 w-4 cursor-pointer text-primary" />
         </Button>
+        {/* Sort */}
+        <div>
+          {/* <Label className="text-xs text-slate-50">Sort Order</Label> */}
+          <RadioGroup value={sort} onValueChange={(v) => setSort(v as Sort)}>
+            <div className="flex flex-row items-center space-x-4 pt-2">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="DESC" id="r2" />
+                <Label htmlFor="r2">DESC</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="ASC" id="r3" />
+                <Label htmlFor="r3">ASC</Label>
+              </div>
+            </div>
+          </RadioGroup>
+        </div>
       </div>
 
       {/* status section */}

@@ -10,8 +10,10 @@ import DateRangePicker, {
 import DashboardTitle from '@/components/dashboard-title';
 import { useConfig } from '@/lib/config-context';
 import { getEvents } from '@/lib/api';
-import { Event } from '@/lib/types';
+import { Event, Sort } from '@/lib/types';
 import EventTable from '@/components/event-table';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 import {
   FilterSection,
@@ -19,18 +21,12 @@ import {
   FilterSectionHandle,
 } from '../event-verification/filter-section';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export default function Page() {
   // const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [isFilteringVisible, setIsFilteringVisible] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [events, setEvents] = useState<Event[]>([]);
-  const [originalEvents, setOriginalEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [total, setTotal] = useState(0);
   const [firstLoad, setFirstLoad] = useState(false);
   const dateRangePickerRef = useRef<DataRangePickerHandle>(null);
   const filterSectionRef = useRef<FilterSectionHandle>(null);
@@ -44,6 +40,7 @@ export default function Page() {
   });
   const [eventDirections, setEventDirections] = useState<string[]>([]);
   const [searchCount, setSearchCount] = useState(0);
+  const [sort, setSort] = useState<'ASC' | 'DESC'>('DESC');
 
   const { source, dateRange, updateConfig } = useConfig();
 
@@ -74,31 +71,13 @@ export default function Page() {
         defectClasses,
         carName,
         remark,
-        statusFilter: statusFilter === 'ALL' ? undefined : statusFilter,
-        currentPage,
-        itemsPerPage,
-        sort: 'DESC',
+        sort,
       });
 
-      const originalEvents: Event[] = responseEvents.data.data['events'];
-      let events: Event[] = [];
-
-      const total = responseEvents.data.data['total'];
-
-      if (statusFilter === 'ALL') {
-        events = [...originalEvents];
-      } else {
-        originalEvents.forEach((item) => {
-          if (item.status === statusFilter) {
-            events.push(item);
-          }
-        });
-      }
+      // const total = responseEvents.length;
 
       // console.log(response.data.data);
-      setOriginalEvents(originalEvents);
-      setEvents(events);
-      setTotal(total);
+      setEvents(responseEvents);
     } catch (err) {
       console.error(err);
       setError(
@@ -108,8 +87,6 @@ export default function Page() {
       setIsLoading(false);
     }
   }, [
-    currentPage,
-    itemsPerPage,
     source,
     dateRange,
     carName,
@@ -118,8 +95,8 @@ export default function Page() {
     defectGroup,
     defectClasses,
     remark,
-    statusFilter,
     searchCount,
+    sort,
   ]);
 
   useEffect(() => {
@@ -179,6 +156,22 @@ export default function Page() {
           // onClick={() => setDate(modifiedDate)}
           onClick={() => onSearch()}
         />
+        {/* Sort */}
+        <div>
+          {/* <Label className="text-xs text-slate-50">Sort Order</Label> */}
+          <RadioGroup value={sort} onValueChange={(v) => setSort(v as Sort)}>
+            <div className="flex flex-row items-center space-x-4 pt-2">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="DESC" id="r2" />
+                <Label htmlFor="r2">DESC</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="ASC" id="r3" />
+                <Label htmlFor="r3">ASC</Label>
+              </div>
+            </div>
+          </RadioGroup>
+        </div>
         <SlidersHorizontalIcon
           className={cn(
             'h-4 w-4 cursor-pointer',
@@ -193,20 +186,7 @@ export default function Page() {
         <FilterSection
           source={source}
           ref={filterSectionRef}
-          // eventDirections={eventDirections}
-          // setEventDirections={setEventDirections}
-          // chainageRange={chainageRange}
-          // setChainageRange={setChainageRange}
-          // defectGroup={defectGroup}
-          // setDefectGroup={setDefectGroup}
-          // defectClasses={defectClasses}
-          // setDefectClasses={setDefectClasses}
-          // carName={carName}
-          // setCarName={setCarName}
-          // remark={remark}
-          // setRemark={setRemark}
           fetchEvents={handleFilterApply}
-          // clearFilters={clearFilters}
         />
       )}
 

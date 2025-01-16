@@ -3,7 +3,7 @@
 import { format } from 'date-fns';
 import moment from 'moment-timezone';
 import { CalendarIcon } from 'lucide-react';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -28,16 +28,18 @@ export interface DataRangePickerHandle {
 
 const DateRangePicker = forwardRef<DataRangePickerHandle, DateRangePickerProps>(
   (props, ref) => {
-    const [modifiedDateRange, setModifiedDateRange] = useState<DateRange>(
-      props.dateRange,
-    );
+    const [modifiedDateRange, setModifiedDateRange] = useState<
+      DateRange | undefined
+    >(undefined);
 
-    // useEffect(() => {
-    //   if (modifiedDateRange) return;
-    //   setModifiedDateRange(props.dateRange);
-    // }, []);
+    useEffect(() => {
+      if (modifiedDateRange) return;
+      setModifiedDateRange(props.dateRange);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const formatDateWithTime = (date: Date | undefined) => {
+      console.log('date', date);
       if (!date) return '';
       return `${moment(date).format('DD/MM/yyyy hh:mm a')}`;
     };

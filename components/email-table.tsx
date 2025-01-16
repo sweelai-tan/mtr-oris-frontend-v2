@@ -91,7 +91,7 @@ export default function EmailTable({ emails }: { emails: Email[] }) {
     // find email by id
     const email = modfifiedEmails.find((email) => email.id === id);
     try {
-      const response = await updateEmail(source, email as Email);
+      const response = await updateEmail(email as Email);
       if (response) {
         toast({
           title: 'Update email',
@@ -107,7 +107,7 @@ export default function EmailTable({ emails }: { emails: Email[] }) {
     if (!source) return;
 
     try {
-      const response = await deleteEmail(source, id);
+      const response = await deleteEmail(id);
       if (response) {
         toast({
           title: 'Delete event',

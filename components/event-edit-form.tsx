@@ -119,8 +119,10 @@ export default function EventEditForm({
             : [emptyDetect];
 
       setOriginalEvent({ ...event });
+      const duplicateEvent = JSON.parse(JSON.stringify(event)) as Event;
+
       setModifiedEvent({
-        ...event,
+        ...duplicateEvent,
         defects: JSON.parse(JSON.stringify(defects)),
       });
     }
@@ -142,9 +144,9 @@ export default function EventEditForm({
       //   updateEvent,
       // );
       const response = await patchEvent(source, id, patchEventData);
-      console.log('Event updated successfully:', response.data.data['event']);
+      console.log('Event updated successfully:', response);
 
-      return response.data.data['event'];
+      return response;
     } catch (error) {
       throw error;
     }
@@ -155,7 +157,7 @@ export default function EventEditForm({
       console.error('modifiedEvent or originalEvent is null');
       return;
     }
-    // console.log('modifiedEvent:', modifiedEvent);
+    console.log('modifiedEvent:', modifiedEvent);
 
     const aModifiedEvent = JSON.parse(JSON.stringify(modifiedEvent)) as Event;
     aModifiedEvent.status = originalEvent.status;
@@ -184,8 +186,8 @@ export default function EventEditForm({
       }
     }
 
-    console.log('aModifiedEvent:', aModifiedEvent.defects[0].xMin);
-    console.log('originalEvent:', originalEvent.defects[0].xMin);
+    console.log('aModifiedEvent:', aModifiedEvent);
+    console.log('originalEvent:', originalEvent);
 
     const hasEventChange =
       JSON.stringify(originalEvent) !== JSON.stringify(aModifiedEvent);
@@ -203,6 +205,7 @@ export default function EventEditForm({
           modifiedEvent.id,
           {
             status: EventStatus.MODIFIED,
+            direction: aModifiedEvent.direction,
             position: aModifiedEvent.position,
             chainage: aModifiedEvent.chainage,
             defects: aModifiedEvent.defects,
@@ -214,12 +217,10 @@ export default function EventEditForm({
           ...response,
         });
 
-        setOriginalEvent({
-          ...response,
-        });
+        setOriginalEvent(JSON.parse(JSON.stringify(response)));
 
         if (onEventUpdated) {
-          onEventUpdated(response);
+          onEventUpdated(JSON.parse(JSON.stringify(response)));
         }
 
         toast({
@@ -254,12 +255,10 @@ export default function EventEditForm({
           setModifiedEvent({
             ...response,
           });
-          setOriginalEvent({
-            ...response,
-          });
+          setOriginalEvent(JSON.parse(JSON.stringify(response)));
 
           if (onEventUpdated) {
-            onEventUpdated(response);
+            onEventUpdated(JSON.parse(JSON.stringify(response)));
           }
           return;
         }
@@ -281,12 +280,10 @@ export default function EventEditForm({
           setModifiedEvent({
             ...response,
           });
-          setOriginalEvent({
-            ...response,
-          });
+          setOriginalEvent(JSON.parse(JSON.stringify(response)));
 
           if (onEventUpdated) {
-            onEventUpdated(response);
+            onEventUpdated(JSON.parse(JSON.stringify(response)));
           }
           return;
         }
@@ -571,19 +568,46 @@ export default function EventEditForm({
       <div className="basis-1/3 border-l border-gray-800 bg-gray-900 p-4">
         <div className="space-y-2 text-sm">
           <div className="flex items-center justify-between pb-2">
-            <Image src={DateIcon} alt="CarName" />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Image src={DateIcon} alt="CarName" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Car Name</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <div className="w-full pl-4 text-gray-400">
               {modifiedEvent.carName}
             </div>
           </div>
 
           <div className="flex items-center justify-between pb-2">
-            <Image src={DateIcon} alt="Date" />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Image src={DateIcon} alt="Date" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Event Date</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <div className="w-full pl-4 text-gray-400">{localEventAt}</div>
           </div>
 
           <div className="flex items-center gap-1 pb-2">
-            <Image src={StatusIcon} alt="Status" />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Image src={StatusIcon} alt="Status" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Status</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <div className="flex w-full flex-row items-center gap-x-2 pl-4">
               <CheckCircle2
                 className={cn(
@@ -621,7 +645,16 @@ export default function EventEditForm({
           <Separator className="mb-2 mt-2" />
 
           <div className="flex items-center justify-between gap-x-2">
-            <Image src={DirectionIcon} alt="Direction" />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Image src={DirectionIcon} alt="Direction" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Direction</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Select
               defaultValue={modifiedEvent.direction}
               onValueChange={(value: EventDirection) => {
@@ -647,7 +680,16 @@ export default function EventEditForm({
           </div>
 
           <div className="flex items-center justify-between gap-x-2">
-            <Image src={ChainangeIcon} alt="Chainange" />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Image src={ChainangeIcon} alt="Chainange" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Chainage</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             {/* <span className="text-gray-400 w-full pl-4">{chainage}</span> */}
             <Input
               type="number"
@@ -663,7 +705,16 @@ export default function EventEditForm({
           </div>
 
           <div className="flex items-center justify-between gap-x-2">
-            <Image src={ChainangeIcon} alt="Chainange" />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Image src={ChainangeIcon} alt="Chainange" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Position</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Select
               defaultValue={modifiedEvent.position}
               onValueChange={(v: EventPosition) => {
@@ -689,7 +740,16 @@ export default function EventEditForm({
           </div>
 
           <div className="flex items-center justify-between gap-x-2">
-            <Image src={ClassIcon} alt="Class" />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Image src={ClassIcon} alt="Class" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Event Class</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Select
               value={
                 modifiedEvent.defects && modifiedEvent.defects.length !== 0
@@ -697,6 +757,7 @@ export default function EventEditForm({
                   : DefectGroup.UNKNOWN
               }
               onValueChange={(v: DefectGroup) => {
+                console.log(`group: ${v}`);
                 const newDefect = { ...modifiedEvent };
                 newDefect.defects[0].group = v;
                 newDefect.defects[0].class = DefectClass.UNKNOWN;
@@ -724,7 +785,16 @@ export default function EventEditForm({
           </div>
 
           <div className="flex items-center justify-between gap-x-2">
-            <Image src={ClassIcon} alt="Class" />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Image src={ClassIcon} alt="Class" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Event Class</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             {/* <span className="text-gray-400 w-full pl-4">
                     {sysDefects.length === 0
                       ? classTranslations[DefectClass.UNKNOWN]
@@ -738,7 +808,7 @@ export default function EventEditForm({
                   : DefectClass.UNKNOWN
               }
               onValueChange={(v: DefectClass) => {
-                console.log(v);
+                console.log(`class: ${v}`);
 
                 const newDefect = { ...modifiedEvent };
                 newDefect.defects[0].class = v;

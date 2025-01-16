@@ -25,7 +25,7 @@ export default function Page() {
     setError(null);
     try {
       const response = await getEmails(source);
-      const data = response.data.data['emails'];
+      const data = response;
 
       setEmails(data);
     } catch (err) {

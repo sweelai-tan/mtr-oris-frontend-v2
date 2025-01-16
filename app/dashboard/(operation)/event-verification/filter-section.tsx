@@ -6,7 +6,6 @@ import { MultiSelect } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectTrigger,
@@ -22,7 +21,6 @@ import {
   eventDirectionList,
   normalDefectList,
   silCarNameList,
-  Sort,
 } from '@/lib/types';
 import { Label } from '@/components/ui/label';
 
@@ -56,7 +54,6 @@ export interface FilterSectionHandle {
   getDefectGroup: () => string | undefined;
   getDefectClasses: () => string[];
   getRemark: () => string | undefined;
-  getSort: () => Sort;
 }
 
 export const FilterSection = forwardRef<
@@ -76,7 +73,6 @@ export const FilterSection = forwardRef<
   const [defectGroup, setDefectGroup] = useState<string | undefined>(undefined);
   const [defectClasses, setDefectClasses] = useState<string[]>([]);
   const [remark, setRemark] = useState<string | undefined>();
-  const [sort, setSort] = useState<Sort>('DESC');
 
   useImperativeHandle(ref, () => ({
     getCarName: () => carName,
@@ -85,7 +81,6 @@ export const FilterSection = forwardRef<
     getDefectGroup: () => defectGroup,
     getDefectClasses: () => defectClasses,
     getRemark: () => remark,
-    getSort: () => sort,
   }));
 
   const clearFilters = () => {
@@ -150,7 +145,7 @@ export const FilterSection = forwardRef<
                 <Input
                   value={chainageRange.from ? chainageRange.from : ''}
                   placeholder=""
-                  className="border-slate-100 bg-slate-900"
+                  className="border-slate-100 bg-slate-900 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   type="number"
                   min={0}
                   onChange={(e) =>
@@ -163,7 +158,7 @@ export const FilterSection = forwardRef<
                 <Input
                   value={chainageRange.to ? chainageRange.to : ''}
                   placeholder=""
-                  className="border-slate-100 bg-slate-900"
+                  className="border-slate-100 bg-slate-900 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   type="number"
                   min={0}
                   onChange={(e) =>
@@ -183,6 +178,7 @@ export const FilterSection = forwardRef<
                   setDefectClasses([]);
                   setDefectGroup(v);
                 }}
+                value={defectGroup ? defectGroup : ''}
               >
                 <SelectTrigger className="border-slate-100 bg-slate-900">
                   <SelectValue placeholder="Select" />
@@ -220,26 +216,6 @@ export const FilterSection = forwardRef<
               <label className="text-xs text-slate-200">
                 Select defect category first
               </label>
-            </div>
-
-            {/* Sort */}
-            <div className="space-y-2">
-              <Label className="text-xs text-slate-50">Sort Order</Label>
-              <RadioGroup
-                value={sort}
-                onValueChange={(v) => setSort(v as Sort)}
-              >
-                <div className="flex flex-row items-center space-x-4 pt-2">
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="DESC" id="r2" />
-                    <Label htmlFor="r2">Desc</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="ASC" id="r3" />
-                    <Label htmlFor="r3">Asc</Label>
-                  </div>
-                </div>
-              </RadioGroup>
             </div>
           </div>
           {/* remark input */}

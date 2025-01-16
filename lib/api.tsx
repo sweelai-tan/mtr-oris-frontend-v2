@@ -14,6 +14,7 @@ import {
   Alert,
   Inference,
   EventSource,
+  EventDirection,
 } from './types';
 
 const axiosInstance = axios.create({
@@ -45,13 +46,13 @@ interface GetEventsParams {
   defectClasses: string[] | undefined;
   carName: string | undefined;
   remark: string | undefined;
-  statusFilter: string | undefined;
-  currentPage: number;
-  itemsPerPage: number;
+  statusFilter?: string | undefined;
+  currentPage?: number | undefined;
+  itemsPerPage?: number | undefined;
   sort: string;
 }
 
-export const getEvents = async (params: GetEventsParams): Promise<any> => {
+export const getEvents = async (params: GetEventsParams): Promise<Event[]> => {
   const {
     source,
     dateFrom,
@@ -102,24 +103,25 @@ export const getEvents = async (params: GetEventsParams): Promise<any> => {
   const response = await axiosInstance.get(
     `/v1//events/${source}?${queryParams.toString()}`,
   );
-  return response;
+  return response.data.data['events'];
 };
 
 interface GetStatusCountParams {
   source: string;
   dateFrom: Date;
   dateTo: Date;
-  carName?: string;
-  directions?: string[];
-  chainageFrom: number | undefined;
-  chainageTo: number | undefined;
-  defectGroup?: string;
-  defectClasses: string[] | undefined;
-  remark?: string;
+  carName?: string | undefined;
+  directions?: string[] | undefined;
+  chainageFrom?: number | undefined;
+  chainageTo?: number | undefined;
+  defectGroup?: string | undefined;
+  defectClasses?: string[] | undefined;
+  remark?: string | undefined;
 }
 
 export const getStatusCount = async (
   params: GetStatusCountParams,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> => {
   const {
     source,
@@ -166,6 +168,7 @@ export const getStatusCount = async (
 
 export interface PatchEventData {
   status?: EventStatus;
+  direction?: EventDirection;
   position?: EventPosition;
   chainage?: number;
   defects?: Defect[];
@@ -175,14 +178,15 @@ export const patchEvent = async (
   source: string,
   id: string,
   data: PatchEventData,
-): Promise<any> => {
+): Promise<Event> => {
   const response = await axiosInstance.patch(
     `/v1/events/${source}/${id}`,
     data,
   );
-  return response;
+  return response.data.data['event'];
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const generateCsv = async (exportEvents: Event[]): Promise<any> => {
   const response = await axiosInstance.post('/v1/events/generateCsv', {
     events: exportEvents,
@@ -190,6 +194,7 @@ export const generateCsv = async (exportEvents: Event[]): Promise<any> => {
   return response;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const generatePdf = async (exportEvents: Event[]): Promise<any> => {
   const response = await axiosInstance.post(
     '/v1/events/generatePdf',
@@ -246,9 +251,9 @@ export const getAlerts = async (params: GetAlertsParams): Promise<Alert[]> => {
   return response.data.data['alerts'];
 };
 
-export const getEmails = async (source: string): Promise<any> => {
+export const getEmails = async (source: string): Promise<Email[]> => {
   const response = await axiosInstance.get(`/v1/alerts/${source}/emails`);
-  return response;
+  return response.data.data['emails'];
 };
 
 export const addEmail = async (
@@ -262,10 +267,7 @@ export const addEmail = async (
   return response.data.data['email'];
 };
 
-export const updateEmail = async (
-  source: string,
-  email: Email,
-): Promise<Email> => {
+export const updateEmail = async (email: Email): Promise<Email> => {
   const updateData = {
     name: email.name,
     settings: email.settings,
@@ -277,11 +279,12 @@ export const updateEmail = async (
   return response.data.data['email'];
 };
 
-export const deleteEmail = async (source: string, id: string): Promise<any> => {
+export const deleteEmail = async (id: string): Promise<Email> => {
   const response = await axiosInstance.delete(`/v1/alerts/emails/${id}`);
-  return response.data;
+  return response.data.data['email'];
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getPresignedUploadUri = async (filename: string): Promise<any> => {
   const queryParams = new URLSearchParams();
   queryParams.append('filename', filename);

@@ -90,7 +90,7 @@ export default function Header() {
                 updateConfig && updateConfig({ source: EventSource.TML_VIDEO })
               }
             >
-              {sourceTranslations.SIL_VIDEO}
+              {sourceTranslations.TML_VIDEO}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>

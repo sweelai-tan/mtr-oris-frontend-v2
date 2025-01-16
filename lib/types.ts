@@ -187,13 +187,14 @@ export const eventDirectionList = [
   { value: EventDirection.UP, label: 'Up' },
   { value: EventDirection.DOWN, label: 'Down' },
   { value: EventDirection.NK, label: 'Neck' },
+  { value: EventDirection.SWITCH, label: 'Switch' },
   { value: EventDirection.UNKNOWN, label: 'Unknown' },
 ];
 
 export const eventPositionList = [
   { value: 'LEFT', label: 'Left' },
   { value: 'RIGHT', label: 'Right' },
-  { value: 'CENTER', label: 'Center' },
+  // { value: 'CENTER', label: 'Center' },
   { value: 'UNKNOWN', label: 'Unknown' },
 ];
 

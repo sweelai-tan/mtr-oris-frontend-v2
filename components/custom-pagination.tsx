@@ -112,7 +112,7 @@ export default function CustomPagination({
         <span className="text-sm">Items per page</span>
         <Select
           value={itemsPerPage.toString()}
-          onValueChange={(value) => onCurrentPageChange(Number(value))}
+          onValueChange={(value) => onItemsPerPageChange(Number(value))}
         >
           <SelectTrigger className="h-8 w-[70px]">
             <SelectValue placeholder={itemsPerPage} />
@@ -131,7 +131,7 @@ export default function CustomPagination({
             type="number"
             value={inputPage}
             onChange={handlePageInputChange}
-            className="w-16 text-center"
+            className="w-16 text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             min={1}
             max={Math.ceil(totalItems / itemsPerPage)}
           />
@@ -154,11 +154,11 @@ export default function CustomPagination({
               />
             </PaginationItem>
 
-            {pageNumbers.map((pageNumber) => {
+            {pageNumbers.map((pageNumber, index) => {
               if (pageNumber === 'ellipsis') {
                 return (
                   <PaginationEllipsis
-                    key={pageNumber}
+                    key={pageNumber + index}
                     className="border border-gray-700 text-gray-400"
                   />
                 );
