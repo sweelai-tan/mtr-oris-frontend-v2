@@ -378,3 +378,14 @@ export type Inference = {
   videoFilename: string;
   totalEvents: number;
 };
+
+export type EventStatusAggregate = {
+  total: number;
+  pending: number;
+  verified: number;
+  modified: number;
+  filteredTotal: number;
+  filteredPending: number;
+  filteredVerified: number;
+  filteredModified: number;
+};

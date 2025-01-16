@@ -139,6 +139,9 @@ export default function CustomPagination({
             of {Math.ceil(totalItems / itemsPerPage)}
           </span>
         </div>
+        <div>
+          <span className="text-sm text-gray-400">({totalItems} items)</span>
+        </div>
       </div>
 
       <div>

@@ -15,6 +15,7 @@ import {
   Inference,
   EventSource,
   EventDirection,
+  EventStatusAggregate,
 } from './types';
 
 const axiosInstance = axios.create({
@@ -121,8 +122,7 @@ interface GetStatusCountParams {
 
 export const getStatusCount = async (
   params: GetStatusCountParams,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any> => {
+): Promise<EventStatusAggregate> => {
   const {
     source,
     dateFrom,
@@ -163,7 +163,7 @@ export const getStatusCount = async (
   const response = await axiosInstance.get(
     `/v1/events/${source}/status-aggregate?${queryParams.toString()}`,
   );
-  return response;
+  return response.data.data['statusAggregate'];
 };
 
 export interface PatchEventData {

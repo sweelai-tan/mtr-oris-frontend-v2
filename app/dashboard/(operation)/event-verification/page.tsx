@@ -111,22 +111,17 @@ function EventVerificationPage() {
         sort,
       });
 
-      // const responseStatusCount = await getStatusCount({
-      //   source,
-      //   dateFrom: dateRange.from,
-      //   dateTo: dateRange.to,
-      //   carName: carName,
-      //   directions: eventDirections,
-      //   chainageFrom: chainageRange.from,
-      //   chainageTo: chainageRange.to,
-      //   defectGroup: defectGroup,
-      //   defectClasses: defectClasses,
-      //   remark,
-      // });
       const responseStatusCount = await getStatusCount({
         source,
         dateFrom: dateRange.from,
         dateTo: dateRange.to,
+        carName: carName,
+        directions: eventDirections,
+        chainageFrom: chainageRange.from,
+        chainageTo: chainageRange.to,
+        defectGroup: defectGroup,
+        defectClasses: defectClasses,
+        remark,
       });
 
       // const originalEvents: Event[] = responseEvents.data.data['events'];
@@ -146,33 +141,50 @@ function EventVerificationPage() {
 
       // console.log(response.data.data);
       // setOriginalEvents(originalEvents);
-      const totalPending =
-        responseStatusCount.data.data['statusAggregate']['PENDING'];
-      const totalVerified =
-        responseStatusCount.data.data['statusAggregate']['VERIFIED'];
-      const totalModified =
-        responseStatusCount.data.data['statusAggregate']['MODIFIED'];
-      const total =
-        responseStatusCount.data.data['statusAggregate']['PENDING'] +
-        responseStatusCount.data.data['statusAggregate']['VERIFIED'] +
-        responseStatusCount.data.data['statusAggregate']['MODIFIED'];
+      const totalPending = responseStatusCount.pending;
+      const totalVerified = responseStatusCount.verified;
+      const totalModified = responseStatusCount.modified;
+      const total = responseStatusCount.total;
+
       const events = responseEvents;
       setEvents(events);
-      setTotal(
-        statusFilter === 'PENDING'
-          ? totalPending
-          : statusFilter === 'VERIFIED'
-            ? totalVerified
-            : statusFilter === 'MODIFIED'
-              ? totalModified
-              : total,
-      );
+
+      const hasFilter =
+        !carName ||
+        eventDirections.length > 0 ||
+        !chainageRange.from ||
+        !chainageRange.to ||
+        !defectGroup ||
+        defectClasses.length > 0 ||
+        !remark;
+
+      if (hasFilter) {
+        setTotal(
+          statusFilter === 'PENDING'
+            ? responseStatusCount.filteredPending
+            : statusFilter === 'VERIFIED'
+              ? responseStatusCount.filteredVerified
+              : statusFilter === 'MODIFIED'
+                ? responseStatusCount.filteredModified
+                : responseStatusCount.filteredTotal,
+        );
+      } else {
+        setTotal(
+          statusFilter === 'PENDING'
+            ? responseStatusCount.pending
+            : statusFilter === 'VERIFIED'
+              ? responseStatusCount.verified
+              : statusFilter === 'MODIFIED'
+                ? responseStatusCount.modified
+                : total,
+        );
+      }
 
       setStatusCount({
         all: total,
-        pending: responseStatusCount.data.data['statusAggregate']['PENDING'],
-        verified: responseStatusCount.data.data['statusAggregate']['VERIFIED'],
-        modified: responseStatusCount.data.data['statusAggregate']['MODIFIED'],
+        pending: totalPending,
+        verified: totalVerified,
+        modified: totalModified,
       });
 
       const setScroll = () => {
