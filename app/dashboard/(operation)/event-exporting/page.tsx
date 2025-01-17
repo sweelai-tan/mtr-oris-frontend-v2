@@ -1,6 +1,11 @@
 'use client';
 
-import { Search, SlidersHorizontalIcon } from 'lucide-react';
+import {
+  ArrowDownAZ,
+  ArrowUpAZ,
+  Search,
+  SlidersHorizontalIcon,
+} from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -10,10 +15,9 @@ import DateRangePicker, {
 import DashboardTitle from '@/components/dashboard-title';
 import { useConfig } from '@/lib/config-context';
 import { getEvents } from '@/lib/api';
-import { Event, Sort } from '@/lib/types';
+import { Event } from '@/lib/types';
 import EventTable from '@/components/event-table';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 
 import {
   FilterSection,
@@ -157,8 +161,22 @@ export default function Page() {
           onClick={() => onSearch()}
         />
         {/* Sort */}
-        <div>
-          {/* <Label className="text-xs text-slate-50">Sort Order</Label> */}
+        {sort === 'ASC' ? (
+          <Button
+            className="bg-transparent transition duration-200 hover:bg-slate-900"
+            onClick={() => setSort('DESC')}
+          >
+            <ArrowDownAZ className="h-4 w-4 cursor-pointer text-primary" />
+          </Button>
+        ) : (
+          <Button
+            className="bg-transparent transition duration-200 hover:bg-slate-900"
+            onClick={() => setSort('ASC')}
+          >
+            <ArrowUpAZ className="h-4 w-4 cursor-pointer text-primary" />
+          </Button>
+        )}
+        {/* <div>
           <RadioGroup value={sort} onValueChange={(v) => setSort(v as Sort)}>
             <div className="flex flex-row items-center space-x-4 pt-2">
               <div className="flex items-center space-x-2">
@@ -171,7 +189,7 @@ export default function Page() {
               </div>
             </div>
           </RadioGroup>
-        </div>
+        </div> */}
         <SlidersHorizontalIcon
           className={cn(
             'h-4 w-4 cursor-pointer',

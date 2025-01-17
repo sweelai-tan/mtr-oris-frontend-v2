@@ -1,6 +1,12 @@
 'use client';
 
-import { Search, SlidersHorizontalIcon, X } from 'lucide-react';
+import {
+  ArrowDownAZ,
+  ArrowUpAZ,
+  Search,
+  SlidersHorizontalIcon,
+  X,
+} from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -9,7 +15,7 @@ import DateRangePicker, {
   DataRangePickerHandle,
 } from '@/components/date-range-picker';
 import DashboardTitle from '@/components/dashboard-title';
-import { Event, Sort } from '@/lib/types';
+import { Event } from '@/lib/types';
 import EventStatusSection from '@/components/event-status-section';
 import CustomPagination from '@/components/custom-pagination';
 import { useConfig } from '@/lib/config-context';
@@ -19,8 +25,6 @@ import { Button } from '@/components/ui/button';
 import EventEditForm from '@/components/event-edit-form';
 import Loading from '@/components/loading';
 import Error from '@/components/error';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 import {
   FilterSection,
@@ -397,7 +401,7 @@ function EventVerificationPage() {
       onScroll={handleScroll}
     >
       <DashboardTitle>Event Verification</DashboardTitle>
-      <div className="flex flex-row items-center gap-x-4">
+      <div className="flex flex-row items-center gap-x-2">
         {dateRange && dateRange.from && dateRange.to && (
           <DateRangePicker
             dateRange={dateRange}
@@ -412,8 +416,22 @@ function EventVerificationPage() {
           <Search className="h-4 w-4 cursor-pointer text-primary" />
         </Button>
         {/* Sort */}
-        <div>
-          {/* <Label className="text-xs text-slate-50">Sort Order</Label> */}
+        {sort === 'ASC' ? (
+          <Button
+            className="bg-transparent transition duration-200 hover:bg-slate-900"
+            onClick={() => setSort('DESC')}
+          >
+            <ArrowDownAZ className="h-4 w-4 cursor-pointer text-primary" />
+          </Button>
+        ) : (
+          <Button
+            className="bg-transparent transition duration-200 hover:bg-slate-900"
+            onClick={() => setSort('ASC')}
+          >
+            <ArrowUpAZ className="h-4 w-4 cursor-pointer text-primary" />
+          </Button>
+        )}
+        {/* <div>
           <RadioGroup value={sort} onValueChange={(v) => setSort(v as Sort)}>
             <div className="flex flex-row items-center space-x-4 pt-2">
               <div className="flex items-center space-x-2">
@@ -426,7 +444,7 @@ function EventVerificationPage() {
               </div>
             </div>
           </RadioGroup>
-        </div>
+        </div> */}
       </div>
 
       {/* status section */}
