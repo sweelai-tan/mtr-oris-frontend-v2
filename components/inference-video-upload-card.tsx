@@ -119,7 +119,7 @@ export default function InferenceVideoUploadCard({
 
       // how to get filename extension?
       const filename = `${inference.id}_${source}_${data.videoDate}.${getFileExtension(data.file.name)}`;
-      const presignedUploadUri = await getPresignedUploadUri(filename);
+      const presignedUploadUri = await getPresignedUploadUri(source, filename);
 
       const uploadResponse = await axios.put(presignedUploadUri, data.file, {
         headers: {
@@ -220,7 +220,6 @@ export default function InferenceVideoUploadCard({
                 {/* date */}
                 <div className="max-w-sm">
                   <FormField
-                    disabled={isUploading}
                     control={form.control}
                     name="videoDate"
                     render={({ field }) => (
@@ -228,6 +227,7 @@ export default function InferenceVideoUploadCard({
                         <FormLabel>Video date</FormLabel>
                         <FormControl>
                           <Input
+                            disabled={isUploading}
                             type="date"
                             className="mt-1 border-slate-700 bg-slate-800 text-slate-200"
                             placeholder="DD/MM/YYYY"
@@ -242,7 +242,6 @@ export default function InferenceVideoUploadCard({
 
                 {/* remark */}
                 <FormField
-                  disabled={isUploading}
                   control={form.control}
                   name="remark"
                   render={({ field }) => (
@@ -250,6 +249,7 @@ export default function InferenceVideoUploadCard({
                       <FormLabel>Remark</FormLabel>
                       <FormControl>
                         <Textarea
+                          disabled={isUploading}
                           placeholder="Fill in the note about the video"
                           className="mt-1 min-h-[100px] border-slate-700 bg-slate-800 text-slate-200"
                           maxLength={100}
@@ -266,7 +266,6 @@ export default function InferenceVideoUploadCard({
 
                 {/* file */}
                 <FormField
-                  disabled={isUploading}
                   control={form.control}
                   name="file"
                   render={(
@@ -287,6 +286,7 @@ export default function InferenceVideoUploadCard({
                           onClick={() => fileInputRef.current?.click()}
                         >
                           <input
+                            disabled={isUploading}
                             type="file"
                             className="hidden"
                             accept=".mp4,.avi"

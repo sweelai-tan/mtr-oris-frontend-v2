@@ -6,8 +6,10 @@ import {
   Brain,
   FileDown,
   FileSpreadsheet,
+  FileVideo,
   Gauge,
   LayoutDashboard,
+  ListVideo,
   Mail,
   Plus,
   Sparkles,
@@ -128,12 +130,12 @@ const videoSidebarItems = [
     items: [
       {
         name: 'Event verification',
-        icon: FileSpreadsheet,
+        icon: FileVideo,
         href: '/dashboard/event-verification',
       },
       {
         name: 'Event exporting',
-        icon: FileDown,
+        icon: ListVideo,
         href: '/dashboard/event-exporting',
       },
     ],

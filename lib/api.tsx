@@ -284,10 +284,13 @@ export const deleteEmail = async (id: string): Promise<Email> => {
   return response.data.data['email'];
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getPresignedUploadUri = async (filename: string): Promise<any> => {
+export const getPresignedUploadUri = async (
+  source: EventSource,
+  filename: string,
+): Promise<string> => {
   const queryParams = new URLSearchParams();
   queryParams.append('filename', filename);
+  queryParams.append('source', source);
   const response = await axiosInstance.get(
     `/v1/s3/presignedUploadUri?${queryParams.toString()}`,
   );
