@@ -6,7 +6,7 @@ import DashboardTitle from '@/components/dashboard-title';
 import EventVideoTable from '@/components/event-video-table';
 import Loading from '@/components/loading';
 import Error from '@/components/error';
-import { getInferences } from '@/lib/api';
+import { deleteInference, getInferences } from '@/lib/api';
 import { useConfig } from '@/lib/config-context';
 import { Inference } from '@/lib/types';
 
@@ -37,6 +37,19 @@ export default function Page() {
     }
   }, [source]);
 
+  const handleDelete = async (id: string) => {
+    if (!source) {
+      return;
+    }
+
+    try {
+      await deleteInference(source, id);
+      setInferences((prev) => prev.filter((inference) => inference.id !== id));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchInferences();
   }, [fetchInferences]);
@@ -46,7 +59,9 @@ export default function Page() {
       <DashboardTitle>Classified Events In Video</DashboardTitle>
       {isLoading && <Loading />}
       {error && <Error>{error}</Error>}
-      {!isLoading && !error && <EventVideoTable inferences={inferences} />}
+      {!isLoading && !error && (
+        <EventVideoTable inferences={inferences} onItemDelete={handleDelete} />
+      )}
     </div>
   );
 }

@@ -332,3 +332,8 @@ export const getInferences = async (
   const response = await axiosInstance.get(`/v1/inference/${source}`);
   return response.data.data['inferences'];
 };
+
+export const deleteInference = async (source: EventSource, id: string) => {
+  const response = await axiosInstance.delete(`/v1/inference/${source}/${id}`);
+  return response.data.data['inference'];
+};

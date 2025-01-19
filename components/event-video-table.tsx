@@ -1,8 +1,21 @@
+/* eslint-disable import/named */
 'use client';
 
 import { useState } from 'react';
 import moment from 'moment-timezone';
-import { ChevronDown } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+  VisibilityState,
+} from '@tanstack/react-table';
 
 import { Inference, InferenceStatus } from '@/lib/types';
 
@@ -14,64 +27,218 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table';
-import CustomPagination from './custom-pagination';
+// import CustomPagination from './custom-pagination';
+import { Button } from './ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './ui/alert-dialog';
 
 export interface EventVideoTableProps {
   inferences: Inference[];
+  onItemDelete?: (id: string) => void;
 }
 
-export default function EventVideoTable({ inferences }: EventVideoTableProps) {
-  const [sortConfig, setSortConfig] = useState({
-    key: 'eventAt',
-    direction: 'ascending',
+const getStatusColor = (status: Inference['status']) => {
+  switch (status) {
+    case InferenceStatus.SUCCESS:
+      return 'text-green-500';
+    case InferenceStatus.PENDING:
+      return 'text-blue-500';
+    case InferenceStatus.IN_PROGRESS:
+      return 'text-yellow-500';
+    case InferenceStatus.FAILED:
+      return 'text-red-500';
+    default:
+      return 'text-gray-500';
+  }
+};
+
+export default function EventVideoTable({
+  inferences,
+  onItemDelete,
+}: EventVideoTableProps) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+
+  const columns: ColumnDef<Inference>[] = [
+    {
+      accessorKey: 'index',
+      header: 'No.',
+      cell: ({ row }) => {
+        return <div className="text-left font-medium">{row.index + 1}</div>;
+      },
+    },
+    {
+      accessorKey: 'uploadedAt',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Uploaded At
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="text-left font-medium">
+            {moment(row.original.uploadedAt)
+              .tz('Asia/Hong_KOng')
+              .format('DD/MM/YYYY HH:mm:ss')}
+          </div>
+        );
+      },
+      enableSorting: true,
+    },
+    {
+      accessorKey: 'aiModelId',
+      header: 'AI Model',
+      cell: ({}) => {
+        return <div className="text-left font-medium">TEST</div>;
+      },
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => {
+        return (
+          <div className="text-left font-medium">
+            <span className={getStatusColor(row.original.status)}>
+              {row.original.status}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'comment',
+      header: 'Remark',
+      cell: ({ row }) => {
+        return (
+          <div className="text-left font-medium">{row.original.comment}</div>
+        );
+      },
+    },
+    {
+      accessorKey: 'startAt',
+      header: 'Started At',
+      cell: ({ row }) => {
+        return (
+          <div className="text-left font-medium">
+            {moment(row.original.startAt)
+              .tz('Asia/Hong_KOng')
+              .format('DD/MM/YYYY HH:mm:ss')}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'endAt',
+      header: 'Completed At',
+      cell: ({ row }) => {
+        return (
+          <div className="text-left font-medium">
+            {row.original.endAt
+              ? moment(row.original.endAt)
+                  .tz('Asia/Hong_KOng')
+                  .format('DD/MM/YYYY HH:mm:ss')
+              : ''}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'totalEvents',
+      header: 'Images',
+      cell: ({ row }) => {
+        return (
+          <div className="text-left font-medium">
+            {row.original.totalEvents}
+          </div>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      accessorKey: 'id',
+      header: 'Actions',
+      cell: ({ row }) => {
+        return (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                // onClick={() => console.log('Edit', row.original.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Are you sure want to delete?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your the inference job contents.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => {
+                    console.log('Delete', row.original.id);
+                    if (onItemDelete) {
+                      onItemDelete(row.original.id);
+                    }
+                  }}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        );
+      },
+    },
+  ];
+
+  const table = useReactTable({
+    data: inferences,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    getCoreRowModel: getCoreRowModel<Inference>(),
+    getPaginationRowModel: getPaginationRowModel<Inference>(),
+    getSortedRowModel: getSortedRowModel<Inference>(),
+    getFilteredRowModel: getFilteredRowModel<Inference>(),
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
   });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-
-  const sortedInferences = [...inferences].sort((a, b) => {
-    const key = sortConfig.key as keyof Inference;
-    if (a[key] < b[key]) {
-      return sortConfig.direction === 'ascending' ? -1 : 1;
-    }
-    if (a[key] > b[key]) {
-      return sortConfig.direction === 'ascending' ? 1 : -1;
-    }
-    return 0;
-  });
-
-  const requestSort = (key: keyof Inference) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
-    }
-    setSortConfig({ key, direction });
-  };
-  const getStatusColor = (status: Inference['status']) => {
-    switch (status) {
-      case InferenceStatus.SUCCESS:
-        return 'text-green-500';
-      case InferenceStatus.PENDING:
-        return 'text-blue-500';
-      case InferenceStatus.IN_PROGRESS:
-        return 'text-yellow-500';
-      case InferenceStatus.FAILED:
-        return 'text-red-500';
-      default:
-        return 'text-gray-500';
-    }
-  };
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-
-  const currentInferences = sortedInferences.slice(startIndex, endIndex);
 
   return (
     <div className="rounded-lg border border-gray-800 bg-slate-900">
       {/* <div className="flex items-center justify-between p-4">
         <h2 className="text-lg font-semibold text-white">Uploaded Videos</h2>
       </div> */}
-      <div>
+      {/* <div>
         <CustomPagination
           currentPage={currentPage}
           itemsPerPage={itemsPerPage}
@@ -136,7 +303,78 @@ export default function EventVideoTable({ inferences }: EventVideoTableProps) {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </Table> */}
+      <div>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="text-center">
+                  No data available
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{' '}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
