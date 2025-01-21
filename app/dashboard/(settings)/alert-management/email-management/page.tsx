@@ -43,7 +43,7 @@ export default function Page() {
 
   return (
     <div className="flex h-screen flex-col space-y-6">
-      <DashboardTitle>Email Management</DashboardTitle>
+      <DashboardTitle>Email Recipient Management</DashboardTitle>
       <div className="flex flex-row items-center justify-between gap-x-4">
         <Link href="/dashboard/alert-management">
           <Button className="ml-auto" variant={'outline'}>

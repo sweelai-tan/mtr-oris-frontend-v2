@@ -1,6 +1,6 @@
 'use client';
 
-import { PlusIcon, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import moment from 'moment-timezone';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -122,8 +122,7 @@ export default function Page() {
         </div>
         <Link href="/dashboard/alert-management/email-management">
           <Button className="ml-auto bg-cyan-500 text-primary hover:bg-cyan-600">
-            <PlusIcon />
-            Email
+            Email Recipient Management
           </Button>
         </Link>
       </div>
