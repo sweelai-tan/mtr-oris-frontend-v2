@@ -206,7 +206,6 @@ export default function EventCard(params: EventCardProps) {
                   )}
                   onDoubleClick={handleImageDoubleClick}
                 >
-                  {/* <img src={`http://20.205.128.43:10001${imageSrc}`} alt="Event Image" className="object-cover w-full h-full rounded-lg" /> */}
                   <RectangleOnImage
                     imageUrl={`/v1/${event.imageSrc}`}
                     originalHeight={event.originalHeight}

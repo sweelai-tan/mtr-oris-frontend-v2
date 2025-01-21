@@ -58,7 +58,6 @@ function EventVerificationPage() {
   });
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [events, setEvents] = useState<Event[]>([]);
-  // const [originalEvents, setOriginalEvents] = useState<Event[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [total, setTotal] = useState(0);
@@ -425,9 +424,6 @@ function EventVerificationPage() {
     );
   }
 
-  console.log(`page: dateRange ${dateRange?.from} ~ ${dateRange?.to}`);
-  console.log(`page: gridColumns ${gridColumns}`);
-
   return (
     <div
       className="flex h-screen flex-col space-y-6"
@@ -465,20 +461,6 @@ function EventVerificationPage() {
             <ArrowUpAZ className="h-4 w-4 cursor-pointer text-primary" />
           </Button>
         )}
-        {/* <div>
-          <RadioGroup value={sort} onValueChange={(v) => setSort(v as Sort)}>
-            <div className="flex flex-row items-center space-x-4 pt-2">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="DESC" id="r2" />
-                <Label htmlFor="r2">DESC</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="ASC" id="r3" />
-                <Label htmlFor="r3">ASC</Label>
-              </div>
-            </div>
-          </RadioGroup>
-        </div> */}
       </div>
 
       {/* status section */}

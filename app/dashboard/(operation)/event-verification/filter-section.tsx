@@ -41,21 +41,8 @@ export type FilterData = {
 interface FilterSectionProps {
   source: EventSource;
   data: FilterData;
-  // eventDirections: string[];
-  // setEventDirections: (value: string[]) => void;
-  // chainageRange: ChainageRange;
-  // setChainageRange: (value: ChainageRange) => void;
-  // defectGroup: string | undefined;
-  // setDefectGroup: (value: string | undefined) => void;
-  // defectClasses: string[];
-  // setDefectClasses: (value: string[]) => void;
-  // carName: string | undefined;
-  // setCarName: (value: string | undefined) => void;
-  // remark: string | undefined;
-  // setRemark: (value: string | undefined) => void;
   fetchEvents: () => void;
   setData: (data: FilterData) => void;
-  // clearFilters: () => void;
 }
 
 export type FilterSectionHandle = object;
