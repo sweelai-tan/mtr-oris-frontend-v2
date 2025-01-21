@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -526,94 +526,89 @@ export default function EventCard(params: EventCardProps) {
                       </SelectContent>
                     </Select>
                   </div>
+                  {/* remark */}
+                  <div>
+                    <Label
+                      htmlFor="message"
+                      className="text-sm text-muted-foreground"
+                    >
+                      Remark
+                    </Label>
+                    {/* remark text area */}
+                    <div className="relative pt-2">
+                      <Textarea
+                        onChange={(e) => {
+                          setModifiedEvent({
+                            ...modifiedEvent,
+                            remark: e.target.value,
+                          });
+                        }}
+                        value={modifiedEvent.remark}
+                        className="w-full resize-none rounded-md border-zinc-800 bg-slate-700 p-2 pr-12 text-sm"
+                      />
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="absolute bottom-2 right-2"
+                              onClick={handleRemarkSave}
+                            >
+                              <Check className="h-4 w-4 text-gray-400" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Save remark</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </div>
 
-                  <div className="relative">
-                    {/* <Textarea 
-                      className="w-full h-24 bg-gray-800 rounded-md p-2 text-sm text-gray-300 resize-none border-gray-800"
-                      defaultValue={remark}
-                      readOnly
-                    /> */}
-                    {/* <Button size="icon" variant="ghost" className="absolute right-2 top-2">
-                      <Copy className="w-4 h-4" />
-                    </Button> */}
+                  {/* buttons */}
+                  <div className="flex gap-2 border-t border-gray-800 pt-4">
+                    <Button
+                      className="flex-1"
+                      variant="secondary"
+                      onClick={handleSave}
+                    >
+                      Save
+                    </Button>
+                    {/* Duplicate */}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="secondary"
+                            onClick={() => onEventDuplicate(event)}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Duplicate event</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    {/* Reset */}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="secondary"
+                            onClick={handleReset}
+                          >
+                            <RotateCcw className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Reset event</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="mt-4 grid w-full gap-1.5">
-              <Label
-                htmlFor="message"
-                className="text-sm text-muted-foreground"
-              >
-                Remark
-              </Label>
-              {/* remark text area */}
-              <div className="relative">
-                <Textarea
-                  onChange={(e) => {
-                    setModifiedEvent({
-                      ...modifiedEvent,
-                      remark: e.target.value,
-                    });
-                  }}
-                  value={modifiedEvent.remark}
-                  className="w-full resize-none rounded-md border-zinc-800 bg-slate-700 p-2 pr-12 text-sm"
-                />
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="absolute bottom-2 right-2"
-                        onClick={handleRemarkSave}
-                      >
-                        <Check className="h-4 w-4 text-gray-400" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Save remark</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </div>
           </div>
         </CardContent>
-        <CardFooter className="gap-2 border-t border-gray-800 p-4">
-          <Button className="flex-1" variant="secondary" onClick={handleSave}>
-            Save
-          </Button>
-          {/* Duplicate */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  onClick={() => onEventDuplicate(event)}
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Duplicate event</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          {/* Reset */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="icon" variant="secondary" onClick={handleReset}>
-                  <RotateCcw className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Reset event</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          {/* <Link href={`/event-verification?id=${id}`}>
-            <Button size="icon" variant="secondary">
-              <Pencil className="h-4 w-4" />
-            </Button>
-          </Link> */}
-        </CardFooter>
       </Card>
     </div>
   );
