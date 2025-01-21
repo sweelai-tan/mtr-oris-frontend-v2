@@ -32,7 +32,6 @@ import { cn } from '@/lib/utils';
 import ClassIcon from '@/public/icons/defect_class.svg';
 import ChainangeIcon from '@/public/icons/event_chainange.svg';
 import DirectionIcon from '@/public/icons/event_direction.svg';
-import StatusIcon from '@/public/icons/event_status.svg';
 import {
   abnormalDefectList,
   DefectClass,
@@ -632,51 +631,6 @@ export default function EventEditForm({
             <div className="w-full pl-4 text-gray-400">{localEventAt}</div>
           </div>
 
-          <div className="flex items-center gap-1 pb-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Image src={StatusIcon} alt="Status" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Status</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <div className="flex w-full flex-row items-center gap-x-2 pl-4">
-              <CheckCircle2
-                className={cn(
-                  'h-4 w-4',
-                  modifiedEvent.status === EventStatus.PENDING
-                    ? 'text-yellow-500'
-                    : '',
-                  modifiedEvent.status === EventStatus.VERIFIED
-                    ? 'text-green-500'
-                    : '',
-                  modifiedEvent.status === EventStatus.MODIFIED
-                    ? 'text-blue-500'
-                    : '',
-                )}
-              />
-              <span
-                className={cn(
-                  modifiedEvent.status === EventStatus.PENDING
-                    ? 'text-yellow-500'
-                    : '',
-                  modifiedEvent.status === EventStatus.VERIFIED
-                    ? 'text-green-500'
-                    : '',
-                  modifiedEvent.status === EventStatus.MODIFIED
-                    ? 'text-blue-500'
-                    : '',
-                )}
-              >
-                {statusTranslations[modifiedEvent.status]}
-              </span>
-            </div>
-            <ChevronDown className="h-4 w-4 text-gray-400 text-transparent" />
-          </div>
-
           <Separator className="mb-2 mt-2" />
 
           <div className="flex items-center justify-between gap-x-2">
@@ -886,6 +840,7 @@ export default function EventEditForm({
             </Select>
           </div>
 
+          {/* remark */}
           <div className="flex flex-col pt-4">
             <span className="w-full pb-2 pl-4 text-gray-400">Remarks</span>
             <div className="relative">
@@ -917,6 +872,52 @@ export default function EventEditForm({
                 </Tooltip>
               </TooltipProvider>
             </div>
+          </div>
+
+          {/* status */}
+          <div className="flex items-center gap-1 pb-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {/* <Image src={StatusIcon} alt="Status" /> */}
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Status</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <div className="flex w-full flex-row items-center gap-x-2 pl-4">
+              <CheckCircle2
+                className={cn(
+                  'h-4 w-4',
+                  modifiedEvent.status === EventStatus.PENDING
+                    ? 'text-yellow-500'
+                    : '',
+                  modifiedEvent.status === EventStatus.VERIFIED
+                    ? 'text-green-500'
+                    : '',
+                  modifiedEvent.status === EventStatus.MODIFIED
+                    ? 'text-blue-500'
+                    : '',
+                )}
+              />
+              <span
+                className={cn(
+                  modifiedEvent.status === EventStatus.PENDING
+                    ? 'text-yellow-500'
+                    : '',
+                  modifiedEvent.status === EventStatus.VERIFIED
+                    ? 'text-green-500'
+                    : '',
+                  modifiedEvent.status === EventStatus.MODIFIED
+                    ? 'text-blue-500'
+                    : '',
+                )}
+              >
+                {statusTranslations[modifiedEvent.status]}
+              </span>
+            </div>
+            <ChevronDown className="h-4 w-4 text-gray-400 text-transparent" />
           </div>
 
           <div className="flex gap-3 border-t border-gray-800 p-4">
