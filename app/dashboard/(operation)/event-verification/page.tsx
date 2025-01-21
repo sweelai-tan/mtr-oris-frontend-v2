@@ -19,12 +19,18 @@ import { Event } from '@/lib/types';
 import EventStatusSection from '@/components/event-status-section';
 import CustomPagination from '@/components/custom-pagination';
 import { useConfig } from '@/lib/config-context';
-import { getEvents, getStatusCount } from '@/lib/api';
+import {
+  createEvent,
+  CreateEventData,
+  getEvents,
+  getStatusCount,
+} from '@/lib/api';
 import EventCard from '@/components/event-card';
 import { Button } from '@/components/ui/button';
 import EventEditForm from '@/components/event-edit-form';
 import Loading from '@/components/loading';
 import Error from '@/components/error';
+import { toast } from '@/hooks/use-toast';
 
 import {
   FilterSection,
@@ -340,6 +346,35 @@ function EventVerificationPage() {
     }
   };
 
+  const handleDuplicateEvent = async (event: Event) => {
+    const newEvent: CreateEventData = {
+      ...event,
+      sysDefects: event.sysDefects
+        ? JSON.parse(JSON.stringify(event.sysDefects))
+        : [],
+      defects: event.defects ? JSON.parse(JSON.stringify(event.defects)) : [],
+      parentId: event.parentId ? event.parentId : event.id,
+    };
+
+    try {
+      const result = await createEvent(newEvent.source, newEvent);
+      if (result) {
+        toast({
+          title: 'Duplicate event',
+          description: 'Event duplicated successfully.',
+        });
+      }
+      setSearchCounter(searchCounter + 1);
+    } catch (error) {
+      console.error('Error duplicating event:', error);
+      toast({
+        title: 'Duplicate event',
+        description: 'Event duplicated failed.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   // check if the page is in edit mode
   const id = searchParams.get('id');
   if (id) {
@@ -496,7 +531,13 @@ function EventVerificationPage() {
           {events && events.length > 0 && (
             <div className={`grid grid-cols-${gridColumns} gap-2`}>
               {events.map((event, index) => {
-                return <EventCard key={index} {...event} />;
+                return (
+                  <EventCard
+                    key={index}
+                    event={event}
+                    onEventDuplicate={handleDuplicateEvent}
+                  />
+                );
               })}
             </div>
           )}

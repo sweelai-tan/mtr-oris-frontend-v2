@@ -1,12 +1,13 @@
 import {
+  Calendar,
   Check,
   CheckCircle2,
   ChevronDown,
   Copy,
   RotateCcw,
   SquareStack,
+  TrainFront,
 } from 'lucide-react';
-import moment from 'moment-timezone';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -25,7 +26,6 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import ClassIcon from '@/public/icons/defect_class.svg';
 import ChainangeIcon from '@/public/icons/event_chainange.svg';
-import DateIcon from '@/public/icons/event_date.svg';
 import DirectionIcon from '@/public/icons/event_direction.svg';
 import StatusIcon from '@/public/icons/event_status.svg';
 import {
@@ -47,9 +47,9 @@ import {
   getEventPositionLabel,
   getDefectClassLabel,
   getDefectGroupLabel,
-  Defect,
 } from '@/lib/types';
 import { patchEvent, PatchEventData } from '@/lib/api';
+import { emptyDetect, getEventStatus, getLocalTime } from '@/lib/event.util';
 
 import { RectangleOnImage } from './rectangle-on-image';
 import { Separator } from './ui/separator';
@@ -62,52 +62,21 @@ import {
   TooltipTrigger,
 } from './ui/tooltip';
 
-export default function EventCard(params: Event) {
-  const localEventAt = moment(params.eventAt)
-    .tz('Asia/Hong_KOng')
-    .format('YYYY/MM/DD HH:mm:ss');
-  const emptyDetect: Defect = {
-    group: DefectGroup.UNKNOWN,
-    class: DefectClass.UNKNOWN,
-    category: '',
-    name: getDefectClassLabel(DefectClass.UNKNOWN),
-    xMin: 0,
-    yMin: 0,
-    xMax: 0,
-    yMax: 0,
-    width: 0,
-    length: 0,
-    severity: '',
-  };
+interface EventCardProps {
+  event: Event;
+  onEventDuplicate: (event: Event) => void;
+}
 
-  const event: Event = {
-    chainage: params.chainage,
-    defects:
-      params.defects && params.defects.length > 0
-        ? Array.from(params.defects)
-        : params.sysDefects && params.sysDefects.length > 0
-          ? Array.from(params.sysDefects)
-          : [emptyDetect],
-    direction: params.direction,
-    eventAt: params.eventAt,
-    id: params.id,
-    parentId: params.parentId,
-    image: params.image,
-    imageSrc: params.imageSrc,
-    originalHeight: params.originalHeight,
-    originalWidth: params.originalWidth,
-    position: params.position,
-    remark: params.remark,
-    source: params.source,
-    status: params.status,
-    sysDefects: params.sysDefects,
-    sysMetadata: params.sysMetadata,
-    carName: params.carName,
-  };
-
+export default function EventCard(params: EventCardProps) {
+  const { event, onEventDuplicate } = params;
   const [modifiedEvent, setModifiedEvent] = useState<Event>({
     ...event,
-    defects: JSON.parse(JSON.stringify(event.defects)),
+    defects:
+      event.defects && event.defects.length > 0
+        ? JSON.parse(JSON.stringify(event.defects))
+        : event.sysDefects && event.sysDefects.length > 0
+          ? JSON.parse(JSON.stringify(event.sysDefects))
+          : [emptyDetect],
   });
   const { toast } = useToast();
   const router = useRouter();
@@ -128,72 +97,38 @@ export default function EventCard(params: Event) {
   };
 
   const handleSave = async () => {
-    const aModifiedEvent = {
-      ...modifiedEvent,
-      status: event.status,
-      remark: event.remark,
-    };
+    const newStatus = getEventStatus(event, modifiedEvent);
+    console.log('newStatus:', newStatus);
 
-    console.log('event:', event);
-    console.log('aModifiedEvent:', aModifiedEvent);
-    const hasEventChange =
-      JSON.stringify(event) !== JSON.stringify(aModifiedEvent);
-
-    if (hasEventChange) {
-      try {
-        await updateEvent(modifiedEvent.source, modifiedEvent.id, {
-          status: EventStatus.MODIFIED,
+    try {
+      const response = await updateEvent(
+        modifiedEvent.source,
+        modifiedEvent.id,
+        {
+          status: newStatus,
           direction: modifiedEvent.direction,
           position: modifiedEvent.position,
           chainage: modifiedEvent.chainage,
           defects: modifiedEvent.defects,
           remark: modifiedEvent.remark,
-        });
+        },
+      );
 
-        setModifiedEvent({
-          ...modifiedEvent,
-          status: EventStatus.MODIFIED,
-        });
+      setModifiedEvent({
+        ...response,
+      });
 
-        toast({
-          title: 'Update event',
-          description: 'Event updated successfully.',
-        });
-      } catch (error) {
-        console.error('Error updating event:', error);
-        toast({
-          title: 'Update event',
-          description: 'Event updated failed.',
-          variant: 'destructive',
-        });
-      }
-    } else {
-      if (modifiedEvent.status !== EventStatus.PENDING) {
-        return;
-      }
-
-      try {
-        await updateEvent(modifiedEvent.source, modifiedEvent.id, {
-          status: EventStatus.VERIFIED,
-        });
-
-        setModifiedEvent({
-          ...modifiedEvent,
-          status: EventStatus.VERIFIED,
-        });
-
-        toast({
-          title: 'Update event',
-          description: 'Event updated successfully.',
-        });
-      } catch (error) {
-        console.error('Error updating event:', error);
-        toast({
-          title: 'Update event',
-          description: 'Event updated failed.',
-          variant: 'destructive',
-        });
-      }
+      toast({
+        title: 'Update event',
+        description: 'Event updated successfully.',
+      });
+    } catch (error) {
+      console.error('Error updating event:', error);
+      toast({
+        title: 'Update event',
+        description: 'Event updated failed.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -298,7 +233,7 @@ export default function EventCard(params: Event) {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Image src={DateIcon} alt="Date" />
+                          <TrainFront className="h-4 w-4 text-gray-400" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Car Name</p>
@@ -315,7 +250,7 @@ export default function EventCard(params: Event) {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Image src={DateIcon} alt="Date" />
+                          <Calendar className="h-4 w-4 text-gray-400" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Event Date</p>
@@ -323,7 +258,7 @@ export default function EventCard(params: Event) {
                       </Tooltip>
                     </TooltipProvider>
                     <div className="w-full pl-4 text-gray-400">
-                      {localEventAt}
+                      {getLocalTime(event.eventAt)}
                     </div>
                   </div>
 
@@ -622,16 +557,23 @@ export default function EventCard(params: Event) {
                     });
                   }}
                   value={modifiedEvent.remark}
-                  className="w-full resize-none rounded-md border-zinc-800 bg-slate-900 p-2 pr-12 text-sm"
+                  className="w-full resize-none rounded-md border-zinc-800 bg-slate-700 p-2 pr-12 text-sm"
                 />
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="absolute bottom-2 right-2"
-                  onClick={handleRemarkSave}
-                >
-                  <Check className="h-4 w-4 text-gray-400" />
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="absolute bottom-2 right-2"
+                        onClick={handleRemarkSave}
+                      >
+                        <Check className="h-4 w-4 text-gray-400" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Save remark</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
           </div>
@@ -640,12 +582,32 @@ export default function EventCard(params: Event) {
           <Button className="flex-1" variant="secondary" onClick={handleSave}>
             Save
           </Button>
-          <Button size="icon" variant="secondary">
-            <Copy className="h-4 w-4" />
-          </Button>
-          <Button size="icon" variant="secondary" onClick={handleReset}>
-            <RotateCcw className="h-4 w-4" />
-          </Button>
+          {/* Duplicate */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  onClick={() => onEventDuplicate(event)}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Duplicate event</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          {/* Reset */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="icon" variant="secondary" onClick={handleReset}>
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Reset event</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           {/* <Link href={`/event-verification?id=${id}`}>
             <Button size="icon" variant="secondary">
               <Pencil className="h-4 w-4" />

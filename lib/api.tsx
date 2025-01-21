@@ -186,6 +186,30 @@ export const patchEvent = async (
   return response.data.data['event'];
 };
 
+export interface CreateEventData {
+  chainage: number;
+  defects: Defect[];
+  direction: EventDirection;
+  eventAt: string;
+  parentId?: string | undefined;
+  image: string;
+  originalHeight: number;
+  originalWidth: number;
+  position: EventPosition;
+  source: EventSource;
+  sysDefects: Defect[];
+  sysMetadata?: string | undefined;
+  carName: string;
+}
+
+export const createEvent = async (
+  source: string,
+  data: PatchEventData,
+): Promise<Event> => {
+  const response = await axiosInstance.post(`/v1/events/${source}`, data);
+  return response.data.data['event'];
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const generateCsv = async (exportEvents: Event[]): Promise<any> => {
   const response = await axiosInstance.post('/v1/events/generateCsv', {

@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   ArrowRight,
+  Calendar,
   Check,
   CheckCircle2,
   ChevronDown,
@@ -8,6 +9,7 @@ import {
   MoveUpLeftIcon,
   RotateCcw,
   Sun,
+  TrainFront,
 } from 'lucide-react';
 import moment from 'moment-timezone';
 import Image from 'next/image';
@@ -29,12 +31,10 @@ import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import ClassIcon from '@/public/icons/defect_class.svg';
 import ChainangeIcon from '@/public/icons/event_chainange.svg';
-import DateIcon from '@/public/icons/event_date.svg';
 import DirectionIcon from '@/public/icons/event_direction.svg';
 import StatusIcon from '@/public/icons/event_status.svg';
 import {
   abnormalDefectList,
-  Defect,
   DefectClass,
   DefectGroup,
   defectGroupList,
@@ -52,6 +52,7 @@ import {
   statusTranslations,
   unknownDefectList,
 } from '@/lib/types';
+import { emptyDetect, getEventStatus } from '@/lib/event.util';
 import { patchEvent, PatchEventData } from '@/lib/api';
 import ZoomInIcon from '@/public/icons/zoom_in.svg';
 import ZoomOutIcon from '@/public/icons/zoom_out.svg';
@@ -82,28 +83,24 @@ export default function EventEditForm({
   nextEventId,
   onEventUpdated,
 }: EventEditFormProps) {
-  console.log(`load event: ${JSON.stringify(event)}`);
-  const [modifiedEvent, setModifiedEvent] = useState<Event | null>(null);
-  const [originalEvent, setOriginalEvent] = useState<Event | null>(null);
+  console.log(`EventEditForm event: ${JSON.stringify(event)}`);
+  const [modifiedEvent, setModifiedEvent] = useState<Event>({
+    ...event,
+    defects:
+      event.defects && event.defects.length > 0
+        ? JSON.parse(JSON.stringify(event.defects))
+        : event.sysDefects && event.sysDefects.length > 0
+          ? JSON.parse(JSON.stringify(event.sysDefects))
+          : [emptyDetect],
+  });
+  // const [originalEvent, setOriginalEvent] = useState<Event | null>(null);
   const rectOnImageRef = useRef<RectangleOnImageHandle>(null);
   const [brightness, setBrightness] = useState(50);
   const [contrast, setContrast] = useState(50);
   const [isMovable, setIsMovable] = useState(false);
-  const emptyDetect: Defect = {
-    group: DefectGroup.UNKNOWN,
-    class: DefectClass.UNKNOWN,
-    category: '',
-    name: getDefectClassLabel(DefectClass.UNKNOWN),
-    xMin: 0,
-    yMin: 0,
-    xMax: 0,
-    yMax: 0,
-    width: 0,
-    length: 0,
-    severity: '',
-  };
 
   useEffect(() => {
+    console.log('onload');
     // console.log('event:', event);
     if (modifiedEvent === null || event.id !== modifiedEvent.id) {
       // const aDefect = event.defects.length === 0
@@ -118,7 +115,6 @@ export default function EventEditForm({
             ? Array.from(event.sysDefects)
             : [emptyDetect];
 
-      setOriginalEvent({ ...event });
       const duplicateEvent = JSON.parse(JSON.stringify(event)) as Event;
 
       setModifiedEvent({
@@ -130,7 +126,7 @@ export default function EventEditForm({
   }, []);
 
   const localEventAt = moment(event.eventAt)
-    .tz('Asia/Hong_KOng')
+    .tz('Asia/Hong_Kong')
     .format('YYYY/MM/DD HH:mm:ss');
 
   const updateEvent = async (
@@ -153,162 +149,201 @@ export default function EventEditForm({
   };
 
   const handleSave = async () => {
-    if (modifiedEvent === null || originalEvent === null) {
-      console.error('modifiedEvent or originalEvent is null');
+    if (modifiedEvent === null) {
+      console.error('modifiedEvent is null');
       return;
     }
-    console.log('modifiedEvent:', modifiedEvent);
+    // console.log('modifiedEvent:', modifiedEvent);
 
-    const aModifiedEvent = JSON.parse(JSON.stringify(modifiedEvent)) as Event;
-    aModifiedEvent.status = originalEvent.status;
-    aModifiedEvent.remark = originalEvent.remark;
+    // const aModifiedEvent = JSON.parse(JSON.stringify(modifiedEvent)) as Event;
+    // aModifiedEvent.status = originalEvent.status;
+    // aModifiedEvent.remark = originalEvent.remark;
 
     if (rectOnImageRef.current) {
       const rect = rectOnImageRef.current.getRect();
       if (rect !== null) {
         console.log('rect:', rect.x);
         // only update defect if more than 2
-        const yMinDiff = Math.abs(rect.y - aModifiedEvent.defects[0].yMin) > 2;
-        const xMinDiff = Math.abs(rect.x - aModifiedEvent.defects[0].xMin) > 2;
+        const yMinDiff = Math.abs(rect.y - modifiedEvent.defects[0].yMin) > 2;
+        const xMinDiff = Math.abs(rect.x - modifiedEvent.defects[0].xMin) > 2;
         const yMaxDiff =
-          Math.abs(rect.y + rect.height - aModifiedEvent.defects[0].yMax) > 2;
+          Math.abs(rect.y + rect.height - modifiedEvent.defects[0].yMax) > 2;
         const xMaxDiff =
-          Math.abs(rect.x + rect.width - aModifiedEvent.defects[0].xMax) > 2;
+          Math.abs(rect.x + rect.width - modifiedEvent.defects[0].xMax) > 2;
 
         if (yMinDiff || xMinDiff || yMaxDiff || xMaxDiff) {
-          aModifiedEvent.defects[0].xMin = rect.x;
-          aModifiedEvent.defects[0].yMin = rect.y;
-          aModifiedEvent.defects[0].width = rect.width;
-          aModifiedEvent.defects[0].length = rect.height;
-          aModifiedEvent.defects[0].xMax = rect.x + rect.width;
-          aModifiedEvent.defects[0].yMax = rect.y + rect.height;
+          modifiedEvent.defects[0].xMin = rect.x;
+          modifiedEvent.defects[0].yMin = rect.y;
+          modifiedEvent.defects[0].width = rect.width;
+          modifiedEvent.defects[0].length = rect.height;
+          modifiedEvent.defects[0].xMax = rect.x + rect.width;
+          modifiedEvent.defects[0].yMax = rect.y + rect.height;
         }
       }
     }
 
-    console.log('aModifiedEvent:', aModifiedEvent);
-    console.log('originalEvent:', originalEvent);
+    const newStatus = getEventStatus(event, modifiedEvent);
 
-    const hasEventChange =
-      JSON.stringify(originalEvent) !== JSON.stringify(aModifiedEvent);
-    console.log('hasEventChange:', hasEventChange);
-    aModifiedEvent.status = modifiedEvent.status;
-    aModifiedEvent.remark = modifiedEvent.remark;
+    console.log('newStatus:', newStatus);
+
+    // let hasEventChange =
+    //   JSON.stringify(originalEvent) !== JSON.stringify(aModifiedEvent);
+    // console.log('hasEventChange:', hasEventChange);
+
+    // aModifiedEvent.status = modifiedEvent.status;
+    // aModifiedEvent.remark = modifiedEvent.remark;
 
     // console.log('originalEvent.defect:', originalEvent.defects[0]);
     // console.log('modifiedEvent.defect:', modifiedEvent.defects[0]);
 
-    if (hasEventChange) {
-      try {
-        const response = await updateEvent(
-          modifiedEvent.source,
-          modifiedEvent.id,
-          {
-            status: EventStatus.MODIFIED,
-            direction: aModifiedEvent.direction,
-            position: aModifiedEvent.position,
-            chainage: aModifiedEvent.chainage,
-            defects: aModifiedEvent.defects,
-            remark: aModifiedEvent.remark,
-          },
-        );
+    // check if defects are changed or copied from sysDefects
+    // if (hasEventChange) {
+    //   if (
+    //     JSON.stringify(event.sysDefects[0]) ===
+    //     JSON.stringify(aModifiedEvent.defects[0])
+    //   ) {
+    //     hasEventChange = false;
+    //   }
+    // }
 
-        setModifiedEvent({
-          ...response,
-        });
+    // if (hasEventChange) {
+    //   try {
+    //     const response = await updateEvent(
+    //       modifiedEvent.source,
+    //       modifiedEvent.id,
+    //       {
+    //         status: EventStatus.MODIFIED,
+    //         direction: aModifiedEvent.direction,
+    //         position: aModifiedEvent.position,
+    //         chainage: aModifiedEvent.chainage,
+    //         defects: aModifiedEvent.defects,
+    //         remark: aModifiedEvent.remark,
+    //       },
+    //     );
 
-        setOriginalEvent(JSON.parse(JSON.stringify(response)));
+    //     setModifiedEvent({
+    //       ...response,
+    //     });
 
-        if (onEventUpdated) {
-          onEventUpdated(JSON.parse(JSON.stringify(response)));
-        }
+    //     setOriginalEvent(JSON.parse(JSON.stringify(response)));
 
-        toast({
-          title: 'Update event',
-          description: 'Event updated successfully.',
-        });
-      } catch (error) {
-        console.error('Error updating event:', error);
-        toast({
-          title: 'Update event',
-          description: 'Event updated failed.',
-          variant: 'destructive',
-        });
+    //     if (onEventUpdated) {
+    //       onEventUpdated(JSON.parse(JSON.stringify(response)));
+    //     }
+
+    //     toast({
+    //       title: 'Update event',
+    //       description: 'Event updated successfully.',
+    //     });
+    //   } catch (error) {
+    //     console.error('Error updating event:', error);
+    //     toast({
+    //       title: 'Update event',
+    //       description: 'Event updated failed.',
+    //       variant: 'destructive',
+    //     });
+    //   }
+    // } else {
+    //   try {
+    //     // update status only with remark
+    //     if (modifiedEvent.status === EventStatus.PENDING) {
+    //       const response = await updateEvent(
+    //         modifiedEvent.source,
+    //         modifiedEvent.id,
+    //         {
+    //           status: EventStatus.VERIFIED,
+    //           remark: modifiedEvent.remark,
+    //         },
+    //       );
+    //       toast({
+    //         title: 'Update event',
+    //         description: 'Event updated successfully.',
+    //       });
+
+    //       setModifiedEvent({
+    //         ...response,
+    //       });
+
+    //       if (onEventUpdated) {
+    //         onEventUpdated(JSON.parse(JSON.stringify(response)));
+    //       }
+    //       return;
+    //     }
+
+    //     // if only remark changed, update remark only
+    //     if (modifiedEvent.remark !== originalEvent.remark) {
+    //       const response = await updateEvent(
+    //         modifiedEvent.source,
+    //         modifiedEvent.id,
+    //         {
+    //           remark: modifiedEvent.remark,
+    //         },
+    //       );
+    //       toast({
+    //         title: 'Update event',
+    //         description: 'Event updated successfully.',
+    //       });
+
+    //       setModifiedEvent({
+    //         ...response,
+    //       });
+
+    //       if (onEventUpdated) {
+    //         onEventUpdated(JSON.parse(JSON.stringify(response)));
+    //       }
+    //       return;
+    //     }
+    //   } catch (error) {
+    //     console.error('Error updating event:', error);
+    //     toast({
+    //       title: 'Update event',
+    //       description: 'Event updated failed.',
+    //       variant: 'destructive',
+    //     });
+    //   }
+    // }
+    try {
+      const response = await updateEvent(
+        modifiedEvent.source,
+        modifiedEvent.id,
+        {
+          status: newStatus,
+          direction: modifiedEvent.direction,
+          position: modifiedEvent.position,
+          chainage: modifiedEvent.chainage,
+          defects: modifiedEvent.defects,
+          remark: modifiedEvent.remark,
+        },
+      );
+
+      setModifiedEvent({
+        ...response,
+      });
+
+      if (onEventUpdated) {
+        onEventUpdated(JSON.parse(JSON.stringify(response)));
       }
-    } else {
-      try {
-        // update status only with remark
-        if (modifiedEvent.status === EventStatus.PENDING) {
-          const response = await updateEvent(
-            modifiedEvent.source,
-            modifiedEvent.id,
-            {
-              status: EventStatus.VERIFIED,
-              remark: modifiedEvent.remark,
-            },
-          );
-          toast({
-            title: 'Update event',
-            description: 'Event updated successfully.',
-          });
 
-          setModifiedEvent({
-            ...response,
-          });
-          setOriginalEvent(JSON.parse(JSON.stringify(response)));
-
-          if (onEventUpdated) {
-            onEventUpdated(JSON.parse(JSON.stringify(response)));
-          }
-          return;
-        }
-
-        // if only remark changed, update remark only
-        if (modifiedEvent.remark !== originalEvent.remark) {
-          const response = await updateEvent(
-            modifiedEvent.source,
-            modifiedEvent.id,
-            {
-              remark: modifiedEvent.remark,
-            },
-          );
-          toast({
-            title: 'Update event',
-            description: 'Event updated successfully.',
-          });
-
-          setModifiedEvent({
-            ...response,
-          });
-          setOriginalEvent(JSON.parse(JSON.stringify(response)));
-
-          if (onEventUpdated) {
-            onEventUpdated(JSON.parse(JSON.stringify(response)));
-          }
-          return;
-        }
-      } catch (error) {
-        console.error('Error updating event:', error);
-        toast({
-          title: 'Update event',
-          description: 'Event updated failed.',
-          variant: 'destructive',
-        });
-      }
+      toast({
+        title: 'Update event',
+        description: 'Event updated successfully.',
+      });
+    } catch (error) {
+      console.error('Error updating event:', error);
+      toast({
+        title: 'Update event',
+        description: 'Event updated failed.',
+        variant: 'destructive',
+      });
     }
   };
 
   const handleRemarkSave = async () => {
-    if (modifiedEvent === null || originalEvent === null) {
+    if (modifiedEvent === null) {
       return;
     }
 
     try {
-      // const status =
-      //   modifiedEvent.status === EventStatus.PENDING
-      //     ? EventStatus.VERIFIED
-      //     : modifiedEvent.status;
-
       await updateEvent(modifiedEvent.source, modifiedEvent.id, {
         // status: status,
         remark: modifiedEvent.remark,
@@ -571,7 +606,7 @@ export default function EventEditForm({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Image src={DateIcon} alt="CarName" />
+                  <TrainFront className="h-4 w-4 text-gray-400" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Car Name</p>
@@ -587,7 +622,7 @@ export default function EventEditForm({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Image src={DateIcon} alt="Date" />
+                  <Calendar className="h-4 w-4 text-gray-400" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Event Date</p>
@@ -855,7 +890,7 @@ export default function EventEditForm({
             <span className="w-full pb-2 pl-4 text-gray-400">Remarks</span>
             <div className="relative">
               <Textarea
-                className="h-16 w-full resize-none rounded-md border-gray-800 bg-gray-800 p-2 text-sm text-gray-300"
+                className="h-16 w-full resize-none rounded-md border-zinc-800 bg-slate-700 p-2 text-sm"
                 value={modifiedEvent.remark}
                 onChange={(e) => {
                   setModifiedEvent({
@@ -864,23 +899,28 @@ export default function EventEditForm({
                   });
                 }}
               />
-              <Button
-                size="icon"
-                variant="ghost"
-                className="absolute bottom-2 right-2"
-                onClick={handleRemarkSave}
-              >
-                <Check className="h-4 w-4 text-gray-400" />
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="absolute bottom-2 right-2"
+                      onClick={handleRemarkSave}
+                    >
+                      <Check className="h-4 w-4 text-gray-400" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Save remark</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
 
           <div className="flex gap-3 border-t border-gray-800 p-4">
-            <Button
-              className="flex-1 border border-gray-300"
-              variant="ghost"
-              onClick={handleSave}
-            >
+            <Button className="flex-1" variant="secondary" onClick={handleSave}>
               Save
             </Button>
             {/* <Button
@@ -890,14 +930,23 @@ export default function EventEditForm({
             >
               <Copy className="w-4 h-4" />
             </Button> */}
-            <Button
-              className="border border-gray-300"
-              size="icon"
-              variant="ghost"
-              onClick={handleReset}
-            >
-              <RotateCcw className="h-4 w-4" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className=""
+                    size="icon"
+                    variant="secondary"
+                    onClick={handleReset}
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Reset event</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
 

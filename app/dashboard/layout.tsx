@@ -7,6 +7,8 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import Header from '@/components/header';
 
+import AutoLogout from './autologout';
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
@@ -30,6 +32,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Breadcrumb> */}
           </div>
         </header>
+        <AutoLogout />
         <div className="p-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>
