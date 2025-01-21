@@ -259,6 +259,9 @@ export default function EventTable({ events }: EventTableProps) {
           </Button>
         </div>
       </div>
+      <div className="border-t border-gray-800 p-4">
+        <span className="text-sm text-gray-400">{`${events.length} events`}</span>
+      </div>
 
       <Table>
         <TableHeader>
@@ -382,9 +385,6 @@ export default function EventTable({ events }: EventTableProps) {
           ))}
         </TableBody>
       </Table>
-      <div className="border-t border-gray-800 p-4">
-        <span className="text-sm text-gray-400">{`${events.length} events`}</span>
-      </div>
     </div>
   );
 }
