@@ -255,9 +255,9 @@ function EventVerificationPage() {
     const handleResize = () => {
       const zoomLevel = window.devicePixelRatio * 100;
 
-      console.log(`zoomLevel`, zoomLevel);
-      console.log(`window.innerWidth`, window.innerWidth);
-      console.log(`window.innerHeight`, window.innerHeight);
+      // console.log(`zoomLevel`, zoomLevel);
+      // console.log(`window.innerWidth`, window.innerWidth);
+      // console.log(`window.innerHeight`, window.innerHeight);
       // setGridColumnsBaseOnInnerWidth(window.innerWidth);
       setGridColumnsBaseOnZooomLevel(zoomLevel);
     };
@@ -271,12 +271,17 @@ function EventVerificationPage() {
   }, []);
 
   const setGridColumnsBaseOnZooomLevel = (zoomLevel: number) => {
+    console.log(`setGridColumnsBaseOnZooomLevel`, zoomLevel);
     if (zoomLevel <= 50) {
       setGridColumns(5);
-    } else if (zoomLevel > 150) {
-      setGridColumns(1);
-    } else {
+    } else if (zoomLevel <= 75) {
+      setGridColumns(3);
+    } else if (zoomLevel <= 100) {
       setGridColumns(2);
+    } else if (zoomLevel < 150) {
+      setGridColumns(2);
+    } else {
+      setGridColumns(1);
     }
   };
 
