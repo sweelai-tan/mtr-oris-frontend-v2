@@ -39,9 +39,8 @@ const DateRangePicker = forwardRef<DataRangePickerHandle, DateRangePickerProps>(
     }, []);
 
     const formatDateWithTime = (date: Date | undefined) => {
-      console.log('date', date);
       if (!date) return '';
-      return `${moment(date).format('DD/MM/yyyy hh:mm a')}`;
+      return `${moment(date).format('yyyy/MM/DD hh:mm a')}`;
     };
 
     const setFromTime = (time: string) => {
