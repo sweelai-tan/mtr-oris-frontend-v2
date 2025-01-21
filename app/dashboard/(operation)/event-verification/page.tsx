@@ -36,6 +36,7 @@ import {
   FilterSection,
   ChainageRange,
   FilterSectionHandle,
+  FilterData,
 } from './filter-section';
 
 interface StatusCount {
@@ -81,6 +82,14 @@ function EventVerificationPage() {
   const [searchCounter, setSearchCounter] = useState(0);
   const [gridColumns, setGridColumns] = useState(2);
   const { source, dateRange, updateConfig } = useConfig();
+  const [filterData, setFilterData] = useState<FilterData>({
+    carName: undefined,
+    chainageRange: { from: undefined, to: undefined },
+    eventDirections: [],
+    defectGroup: undefined,
+    defectClasses: [],
+    remark: undefined,
+  });
 
   const fetchEvents = useCallback(async () => {
     console.log(
@@ -300,28 +309,13 @@ function EventVerificationPage() {
   // };
 
   const handleFilterApply = () => {
-    if (filterSectionRef.current) {
-      const chainageRange = filterSectionRef.current.getChainageRange();
-      const carName = filterSectionRef.current.getCarName();
-      const eventDirections = filterSectionRef.current.getEventDirections();
-      const defectGroup = filterSectionRef.current.getDefectGroup();
-      const defectClasses = filterSectionRef.current.getDefectClasses();
-      const remark = filterSectionRef.current.getRemark();
-
-      if (dateRangePickerRef.current) {
-        const dateRange = dateRangePickerRef.current.getDateRange();
-        updateConfig({ dateRange: dateRange });
-      }
-
-      setChainageRange(chainageRange);
-      setCarName(carName);
-      setEventDirections(eventDirections);
-      setDefectGroup(defectGroup);
-      setDefectClasses(defectClasses);
-      setRemark(remark);
-      setSort(sort);
-      setSearchCounter(searchCounter + 1);
-    }
+    setChainageRange(filterData.chainageRange);
+    setCarName(filterData.carName);
+    setEventDirections(filterData.eventDirections);
+    setDefectGroup(filterData.defectGroup);
+    setDefectClasses(filterData.defectClasses);
+    setRemark(filterData.remark);
+    setSearchCounter(searchCounter + 1);
   };
 
   const handleScroll = () => {
@@ -510,7 +504,8 @@ function EventVerificationPage() {
       {isFilteringVisible && source && (
         <FilterSection
           source={source}
-          ref={filterSectionRef}
+          data={filterData}
+          setData={setFilterData}
           fetchEvents={handleFilterApply}
         />
       )}

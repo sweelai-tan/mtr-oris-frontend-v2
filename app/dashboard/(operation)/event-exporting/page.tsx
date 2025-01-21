@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button';
 import {
   FilterSection,
   ChainageRange,
-  FilterSectionHandle,
+  FilterData,
 } from '../event-verification/filter-section';
 
 export default function Page() {
@@ -33,7 +33,6 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [firstLoad, setFirstLoad] = useState(false);
   const dateRangePickerRef = useRef<DataRangePickerHandle>(null);
-  const filterSectionRef = useRef<FilterSectionHandle>(null);
   const [carName, setCarName] = useState<string | undefined>(undefined);
   const [remark, setRemark] = useState<string | undefined>(undefined);
   const [defectGroup, setDefectGroup] = useState<string | undefined>(undefined);
@@ -45,8 +44,17 @@ export default function Page() {
   const [eventDirections, setEventDirections] = useState<string[]>([]);
   const [searchCount, setSearchCount] = useState(0);
   const [sort, setSort] = useState<'ASC' | 'DESC'>('DESC');
-
   const { source, dateRange, updateConfig } = useConfig();
+  const [filterData, setFilterData] = useState<FilterData>({
+    carName: undefined,
+    chainageRange: { from: undefined, to: undefined },
+    eventDirections: [],
+    defectGroup: undefined,
+    defectClasses: [],
+    remark: undefined,
+  });
+
+  console.log('filterData', filterData);
 
   const fetchEvents = useCallback(async () => {
     console.log(
@@ -125,21 +133,13 @@ export default function Page() {
   };
 
   const handleFilterApply = () => {
-    if (filterSectionRef.current) {
-      const chainageRange = filterSectionRef.current.getChainageRange();
-      const carName = filterSectionRef.current.getCarName();
-      const eventDirections = filterSectionRef.current.getEventDirections();
-      const defectGroup = filterSectionRef.current.getDefectGroup();
-      const defectClasses = filterSectionRef.current.getDefectClasses();
-      const remark = filterSectionRef.current.getRemark();
-
-      setChainageRange(chainageRange);
-      setCarName(carName);
-      setEventDirections(eventDirections);
-      setDefectGroup(defectGroup);
-      setDefectClasses(defectClasses);
-      setRemark(remark);
-    }
+    setChainageRange(filterData.chainageRange);
+    setCarName(filterData.carName);
+    setEventDirections(filterData.eventDirections);
+    setDefectGroup(filterData.defectGroup);
+    setDefectClasses(filterData.defectClasses);
+    setRemark(filterData.remark);
+    setSearchCount(searchCount + 1);
   };
 
   return (
@@ -203,7 +203,9 @@ export default function Page() {
       {isFilteringVisible && source && (
         <FilterSection
           source={source}
-          ref={filterSectionRef}
+          data={filterData}
+          setData={setFilterData}
+          // ref={filterSectionRef}
           fetchEvents={handleFilterApply}
         />
       )}
