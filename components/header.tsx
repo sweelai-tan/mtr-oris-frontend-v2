@@ -18,7 +18,7 @@ export default function Header() {
   const router = useRouter();
 
   return (
-    <div className="flex items-center justify-between px-4 py-2">
+    <div className="flex w-full items-center justify-between px-4 py-2">
       {/* Left Section */}
       <div className="flex items-center space-x-4">
         <h1 className="text-sm font-medium text-gray-200">

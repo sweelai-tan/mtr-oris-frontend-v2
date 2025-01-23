@@ -15,10 +15,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b">
-          <div className="flex w-full items-center gap-2 px-3">
+          <div className="flex h-screen w-full items-center gap-2 px-3">
             <SidebarTrigger />
             <Separator orientation="vertical" className="mr-2 h-4" />
-            <div className="flex-grow">
+            <div className="flex w-full">
               <Header />
             </div>
             {/* <Breadcrumb>
@@ -33,7 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
         <AutoLogout />
-        <div className="p-4">{children}</div>
+        <div className="flex-grow p-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

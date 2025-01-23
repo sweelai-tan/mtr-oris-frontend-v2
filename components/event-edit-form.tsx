@@ -5,6 +5,7 @@ import {
   Check,
   CheckCircle2,
   ChevronDown,
+  Hand,
   Moon,
   MoveUpLeftIcon,
   RotateCcw,
@@ -97,6 +98,7 @@ export default function EventEditForm({
   const [brightness, setBrightness] = useState(50);
   const [contrast, setContrast] = useState(50);
   const [isMovable, setIsMovable] = useState(false);
+  const [isPanable, setIsPanable] = useState(false);
 
   useEffect(() => {
     console.log('onload');
@@ -417,12 +419,16 @@ export default function EventEditForm({
                     size="icon"
                     className={cn('border', isMovable ? 'border-cyan-500' : '')}
                     onClick={() => {
-                      const rect = rectOnImageRef.current;
-                      if (rect) {
-                        // TODO
-                        // rect.zoomIn();
+                      if (rectOnImageRef.current) {
+                        // if zoom level is not 1, disable move
+                        if (rectOnImageRef.current.getZoomLevel() !== 1) {
+                          return;
+                        }
+                        if (isPanable && !isMovable) {
+                          setIsPanable(false);
+                        }
+                        setIsMovable(!isMovable);
                       }
-                      setIsMovable(!isMovable);
                     }}
                   >
                     <MoveUpLeftIcon
@@ -445,9 +451,9 @@ export default function EventEditForm({
                     variant="ghost"
                     size="icon"
                     onClick={() => {
-                      const rect = rectOnImageRef.current;
-                      if (rect) {
-                        rect.zoomIn();
+                      setIsMovable(false);
+                      if (rectOnImageRef.current) {
+                        rectOnImageRef.current.zoomIn();
                       }
                     }}
                   >
@@ -466,9 +472,9 @@ export default function EventEditForm({
                     variant="ghost"
                     size="icon"
                     onClick={() => {
-                      const rect = rectOnImageRef.current;
-                      if (rect) {
-                        rect.zoomOut();
+                      setIsMovable(false);
+                      if (rectOnImageRef.current) {
+                        rectOnImageRef.current.zoomOut();
                       }
                     }}
                   >
@@ -491,9 +497,9 @@ export default function EventEditForm({
                     variant="ghost"
                     size="icon"
                     onClick={() => {
-                      const rect = rectOnImageRef.current;
-                      if (rect) {
-                        rect.zoomMax();
+                      setIsMovable(false);
+                      if (rectOnImageRef.current) {
+                        rectOnImageRef.current.zoomMax();
                       }
                     }}
                   >
@@ -516,9 +522,9 @@ export default function EventEditForm({
                     variant="ghost"
                     size="icon"
                     onClick={() => {
-                      const rect = rectOnImageRef.current;
-                      if (rect) {
-                        rect.zoomReset();
+                      setIsPanable(false);
+                      if (rectOnImageRef.current) {
+                        rectOnImageRef.current.zoomReset();
                       }
                     }}
                   >
@@ -531,6 +537,34 @@ export default function EventEditForm({
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Reset Zoom</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn('border', isPanable ? 'border-cyan-500' : '')}
+                    onClick={() => {
+                      if (rectOnImageRef.current) {
+                        // if zoom level is 1, disable pan
+                        if (rectOnImageRef.current.getZoomLevel() === 1) {
+                          return;
+                        }
+                        if (!isPanable && isMovable) {
+                          setIsMovable(false);
+                        }
+                        setIsPanable(!isPanable);
+                      }
+                    }}
+                  >
+                    <Hand className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Pan Image</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -578,7 +612,7 @@ export default function EventEditForm({
         </div>
 
         {/* Main canvas area */}
-        <div className="relative flex-1 overflow-hidden bg-slate-900">
+        <div className="relative h-full w-full flex-1 overflow-hidden">
           <RectangleOnImage
             imageUrl={`/v1/${modifiedEvent.imageSrc}`}
             originalHeight={modifiedEvent.originalHeight}
@@ -593,13 +627,14 @@ export default function EventEditForm({
             }
             editable
             isMovable={isMovable}
+            isPanable={isPanable}
             ref={rectOnImageRef}
           />
         </div>
       </div>
 
       {/* Right side - Info panel */}
-      <div className="basis-1/3 border-l border-gray-800 bg-gray-900 p-4">
+      <div className="flex basis-1/3 flex-col border-l border-gray-800 bg-gray-900 p-4">
         <div className="space-y-2 text-sm">
           <div className="flex items-center justify-between pb-2">
             <TooltipProvider>

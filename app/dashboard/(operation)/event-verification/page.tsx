@@ -385,7 +385,7 @@ function EventVerificationPage() {
       : null;
 
     return (
-      <div className="flex h-screen flex-col space-y-6">
+      <div className="flex h-full flex-col space-y-6">
         <div className="flex flex-row justify-between">
           <DashboardTitle>Edit Event</DashboardTitle>
           {/* add back button */}
@@ -397,15 +397,17 @@ function EventVerificationPage() {
             ''
           )}
         </div>
-        <div>
+        <div className="flex-grow">
           {selectedEvent ? (
             <EventEditForm
-              className="w-max-lg"
+              className="w-max-lg flex h-full"
               event={selectedEvent}
               previousEventId={previousEventId}
               nextEventId={nextEventId}
               onEventUpdated={updateEventById}
             />
+          ) : isLoading || !firstLoad ? (
+            <Loading />
           ) : (
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="text-center text-red-500">Event not found</div>
