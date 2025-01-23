@@ -494,47 +494,43 @@ function EventVerificationPage() {
 
       {isLoading ? <Loading /> : null}
       {error ? <Error>{error}</Error> : null}
-
-      {!isLoading && !error && (
+      {!isLoading && !error && events && events.length === 0 && (
+        <div className="text-center text-red-500">No events found</div>
+      )}
+      {!isLoading && !error && events && events.length > 0 && (
         <>
           {/* top pagination */}
-          {events && events.length > 0 && (
-            <CustomPagination
-              currentPage={currentPage}
-              itemsPerPage={itemsPerPage}
-              totalItems={total}
-              defaultItemsPerPage={itemsPerPage}
-              onItemsPerPageChange={setItemsPerPage}
-              onCurrentPageChange={setCurrentPage}
-            />
-          )}
+          <CustomPagination
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            totalItems={total}
+            defaultItemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+            onCurrentPageChange={setCurrentPage}
+          />
 
           {/* card list */}
-          {events && events.length > 0 && (
-            <div className={`grid grid-cols-${gridColumns} gap-2`}>
-              {events.map((event, index) => {
-                return (
-                  <EventCard
-                    key={index}
-                    event={event}
-                    onEventDuplicate={handleDuplicateEvent}
-                  />
-                );
-              })}
-            </div>
-          )}
+          <div className={`grid grid-cols-${gridColumns} gap-2`}>
+            {events.map((event, index) => {
+              return (
+                <EventCard
+                  key={index}
+                  event={event}
+                  onEventDuplicate={handleDuplicateEvent}
+                />
+              );
+            })}
+          </div>
 
           {/* bottom pagination */}
-          {events && events.length > 0 && (
-            <CustomPagination
-              currentPage={currentPage}
-              itemsPerPage={itemsPerPage}
-              totalItems={total}
-              defaultItemsPerPage={itemsPerPage}
-              onItemsPerPageChange={setItemsPerPage}
-              onCurrentPageChange={setCurrentPage}
-            />
-          )}
+          <CustomPagination
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            totalItems={total}
+            defaultItemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+            onCurrentPageChange={setCurrentPage}
+          />
         </>
       )}
     </div>

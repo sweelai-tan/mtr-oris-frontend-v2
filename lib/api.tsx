@@ -16,6 +16,7 @@ import {
   EventSource,
   EventDirection,
   EventStatusAggregate,
+  User,
 } from './types';
 
 const axiosInstance = axios.create({
@@ -360,4 +361,9 @@ export const getInferences = async (
 export const deleteInference = async (source: EventSource, id: string) => {
   const response = await axiosInstance.delete(`/v1/inference/${source}/${id}`);
   return response.data.data['inference'];
+};
+
+export const getUsers = async (): Promise<User[]> => {
+  const response = await axiosInstance.get('/v1/users');
+  return response.data.data['users'];
 };

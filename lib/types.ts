@@ -389,3 +389,23 @@ export type EventStatusAggregate = {
   filteredVerified: number;
   filteredModified: number;
 };
+
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+  OPERATOR = 'OPERATOR',
+}
+
+export enum UserStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+}
+
+export type User = {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  status: UserStatus;
+  createdAt: string;
+};
