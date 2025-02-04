@@ -399,7 +399,6 @@ export const updateUser = async (
   data: UpdateUserData,
   id: string,
 ): Promise<User> => {
-  console.log('updateUser', data);
   const response = await axiosInstance.patch(`/v1/users/${id}`, data);
   return response.data.data['user'];
 };
