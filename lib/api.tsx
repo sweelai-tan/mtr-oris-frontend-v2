@@ -17,6 +17,8 @@ import {
   EventDirection,
   EventStatusAggregate,
   User,
+  UserRole,
+  UserStatus,
 } from './types';
 
 const axiosInstance = axios.create({
@@ -366,4 +368,38 @@ export const deleteInference = async (source: EventSource, id: string) => {
 export const getUsers = async (): Promise<User[]> => {
   const response = await axiosInstance.get('/v1/users');
   return response.data.data['users'];
+};
+
+export const getUser = async (id: string): Promise<User> => {
+  const response = await axiosInstance.get(`/v1/users/${id}`);
+  return response.data.data['user'];
+};
+
+interface CreateUserData {
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  status: UserStatus;
+}
+
+export const createUser = async (data: CreateUserData): Promise<User> => {
+  const response = await axiosInstance.post('/v1/auth/register', data);
+  return response.data.data['user'];
+};
+
+interface UpdateUserData {
+  name: string;
+  role: UserRole;
+  status: UserStatus;
+  password?: string | undefined;
+}
+
+export const updateUser = async (
+  data: UpdateUserData,
+  id: string,
+): Promise<User> => {
+  console.log('updateUser', data);
+  const response = await axiosInstance.patch(`/v1/users/${id}`, data);
+  return response.data.data['user'];
 };

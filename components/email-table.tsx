@@ -107,14 +107,13 @@ export default function EmailTable({ emails }: { emails: Email[] }) {
     if (!source) return;
 
     try {
-      const response = await deleteEmail(id);
-      if (response) {
-        toast({
-          title: 'Delete event',
-          description: 'Event deleted successfully.',
-        });
-        setModifiedEmails(modfifiedEmails.filter((email) => email.id !== id));
-      }
+      await deleteEmail(id);
+
+      toast({
+        title: 'Delete event',
+        description: 'Event deleted successfully.',
+      });
+      setModifiedEmails(modfifiedEmails.filter((email) => email.id !== id));
     } catch (error) {
       console.error('Failed to delete entry:', error);
     }

@@ -15,7 +15,8 @@ import type {
   ColumnFiltersState,
   SortingState,
 } from '@tanstack/react-table';
-import { ArrowDownAZ, ArrowUpAZ } from 'lucide-react';
+import { ArrowDownAZ, ArrowUpAZ, Pen, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { User, UserStatus } from '@/lib/types';
 
@@ -29,6 +30,16 @@ import {
 } from './ui/table';
 import { Button } from './ui/button';
 import Custom2Pagination from './custom2-pagination';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from './ui/alert-dialog';
 
 interface UserTableProps {
   users: User[];
@@ -49,6 +60,32 @@ export default function UserTable(params: UserTableProps) {
   const { users } = params;
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleEdit = (id: string) => {
+    console.log('Edit user with id:', id);
+
+    router.push(`/dashboard/user-management/user?id=${id}`);
+  };
+
+  const handleDelete = (id: string) => {
+    console.log('Delete user with id:', id);
+    setUserToDelete(id);
+    setIsAlertDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    console.log('Deleting user with id:', userToDelete);
+    setIsAlertDialogOpen(false);
+    setUserToDelete(null);
+  };
+
+  const cancelDelete = () => {
+    setIsAlertDialogOpen(false);
+    setUserToDelete(null);
+  };
 
   const columns: ColumnDef<User>[] = [
     {
@@ -117,6 +154,24 @@ export default function UserTable(params: UserTableProps) {
         );
       },
       enableSorting: true,
+    },
+    {
+      header: 'Actions',
+      cell: ({ row }) => {
+        return (
+          <div className="text-left font-medium">
+            <Button variant="ghost" onClick={() => handleEdit(row.original.id)}>
+              <Pen className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => handleDelete(row.original.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
     },
   ];
 
@@ -219,6 +274,24 @@ export default function UserTable(params: UserTableProps) {
           )}
         </TableBody>
       </Table>
+
+      {/* delete modal */}
+      <AlertDialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this user?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelDelete}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
