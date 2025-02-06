@@ -93,7 +93,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen w-full bg-[#0D1117] bg-[url('/mtr-bg.png')] bg-cover bg-center bg-no-repeat">
-      <div className="container flex min-h-screen flex-col items-center justify-center">
+      <div className="flex min-h-screen flex-col items-center justify-center">
         <div className="mx-auto w-full max-w-[400px] space-y-6">
           <div className="flex justify-center">
             <div className="flex items-center gap-2">
