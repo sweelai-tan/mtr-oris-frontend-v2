@@ -39,6 +39,8 @@ export interface EventKey {
   eventAt: string;
   group: string;
   class: string;
+  position: string;
+  remark: string;
 }
 
 export default function EventTable({ events }: EventTableProps) {
@@ -51,20 +53,33 @@ export default function EventTable({ events }: EventTableProps) {
 
   const sortedEvents = [...events].sort((a, b) => {
     if (sortConfig.key === 'group' || sortConfig.key === 'class') {
-      if (a.defects.length === 0 || b.defects.length !== 0) {
+      const defectA =
+        a.defects && a.defects.length !== 0
+          ? a.defects[0]
+          : a.sysDefects && a.sysDefects.length > 0
+            ? a.sysDefects[0]
+            : null;
+      const defectB =
+        b.defects && b.defects.length !== 0
+          ? b.defects[0]
+          : b.sysDefects && b.sysDefects.length > 0
+            ? b.sysDefects[0]
+            : null;
+
+      if (!defectA && defectB) {
         return sortConfig.direction === 'ascending' ? 1 : -1;
-      } else if (a.defects.length !== 0 || b.defects.length === 0) {
+      } else if (defectA && !defectB) {
         return sortConfig.direction === 'ascending' ? -1 : 1;
-      } else if (a.defects.length === 0 && b.defects.length === 0) {
+      } else if (!defectA && !defectB) {
         return 0;
       }
 
       const key = sortConfig.key as keyof Event['defects'][0];
-      if (a.defects[0][key] < b.defects[0][key]) {
+      if (defectA![key] < defectB![key]) {
         return sortConfig.direction === 'ascending' ? -1 : 1;
       }
 
-      if (a.defects[0][key] > b.defects[0][key]) {
+      if (defectA![key] > defectB![key]) {
         return sortConfig.direction === 'ascending' ? 1 : -1;
       }
 
@@ -297,7 +312,10 @@ export default function EventTable({ events }: EventTableProps) {
               Chainage
               <ChevronDown className="ml-1 inline-block h-4 w-4" />
             </TableHead>
-            <TableHead className="text-gray-400">
+            <TableHead
+              className="text-gray-400"
+              onClick={() => requestSort('position')}
+            >
               Side
               <ChevronDown className="ml-1 inline-block h-4 w-4" />
             </TableHead>
@@ -322,7 +340,13 @@ export default function EventTable({ events }: EventTableProps) {
                 onClick={() => requestSort('class')}
               />
             </TableHead>
-            <TableHead className="text-gray-400">Remarks</TableHead>
+            <TableHead className="text-gray-400">
+              Remarks{' '}
+              <ChevronDown
+                className="ml-1 inline-block h-4 w-4"
+                onClick={() => requestSort('remark')}
+              />
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

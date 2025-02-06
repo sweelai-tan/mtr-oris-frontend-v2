@@ -218,7 +218,7 @@ export default function Page() {
       ) : error ? (
         <div className="text-center text-red-500">{error}</div>
       ) : (
-        <div className="">
+        <div className="pb-10">
           <EventTable events={events} />
         </div>
         // <div className="flex flex-col">
