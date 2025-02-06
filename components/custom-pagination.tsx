@@ -152,8 +152,16 @@ export default function CustomPagination({
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
+                  if (currentPage === 1) {
+                    return;
+                  }
                   onCurrentPageChange(Math.max(1, currentPage - 1));
                 }}
+                className={`rounded px-2 py-1 ${
+                  currentPage === 1
+                    ? 'pointer-events-none cursor-default opacity-50'
+                    : ''
+                }`}
               />
             </PaginationItem>
 
@@ -261,8 +269,16 @@ export default function CustomPagination({
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
+                  if (currentPage === totalPages) {
+                    return;
+                  }
                   onCurrentPageChange(Math.min(totalPages, currentPage + 1));
                 }}
+                className={`rounded px-2 py-1 ${
+                  currentPage === totalPages
+                    ? 'pointer-events-none cursor-default opacity-50'
+                    : ''
+                }`}
               />
             </PaginationItem>
           </PaginationContent>

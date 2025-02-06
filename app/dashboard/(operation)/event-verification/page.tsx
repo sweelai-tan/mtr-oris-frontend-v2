@@ -314,6 +314,7 @@ function EventVerificationPage() {
     setDefectGroup(filterData.defectGroup);
     setDefectClasses(filterData.defectClasses);
     setRemark(filterData.remark);
+    setCurrentPage(1);
     setSearchCounter(searchCounter + 1);
   };
 
