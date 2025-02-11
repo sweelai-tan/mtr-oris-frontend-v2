@@ -124,7 +124,7 @@ export default function EventEditForm({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [event]);
 
   const localEventAt = moment(event.eventAt)
     .tz('Asia/Hong_Kong')
@@ -990,7 +990,7 @@ export default function EventEditForm({
           <Link
             href={
               previousEventId
-                ? `/event-verification?id=${previousEventId}`
+                ? `/dashboard/event-verification?id=${previousEventId}`
                 : '#'
             }
             replace={true}
@@ -1001,7 +1001,11 @@ export default function EventEditForm({
             </Button>
           </Link>
           <Link
-            href={nextEventId ? `/event-verification?id=${nextEventId}` : '#'}
+            href={
+              nextEventId
+                ? `/dashboard/event-verification?id=${nextEventId}`
+                : '#'
+            }
             replace={true}
           >
             <Button variant={'ghost'} disabled={!nextEventId}>
