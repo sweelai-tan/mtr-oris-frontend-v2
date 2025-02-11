@@ -209,6 +209,7 @@ function EventVerificationPage() {
           containerRef.current.scrollTop = scrollPosition;
         }
       };
+      console.log('scrollPosition', scrollPosition);
       setScroll();
     } catch (err) {
       console.error(err);
@@ -318,8 +319,15 @@ function EventVerificationPage() {
   };
 
   const handleScroll = () => {
+    console.log('scrolling');
     if (containerRef.current) {
       setScrollPosition(containerRef.current.scrollTop);
+    }
+  };
+
+  const scrollToTop = () => {
+    if (containerRef.current) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -537,7 +545,10 @@ function EventVerificationPage() {
             totalItems={total}
             defaultItemsPerPage={itemsPerPage}
             onItemsPerPageChange={setItemsPerPage}
-            onCurrentPageChange={setCurrentPage}
+            onCurrentPageChange={(page) => {
+              setCurrentPage(page);
+              scrollToTop();
+            }}
           />
         </>
       )}
