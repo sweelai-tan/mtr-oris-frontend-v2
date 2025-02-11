@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { AxiosError } from 'axios';
+import Link from 'next/link';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DashboardTitle from '@/components/dashboard-title';
@@ -19,6 +20,7 @@ import ThresholdSettingTable from '@/components/threshold-setting-table';
 import { getThresholds, updateThreshold } from '@/lib/api';
 import { useConfig } from '@/lib/config-context';
 import { toast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
@@ -101,6 +103,13 @@ export default function Page() {
   return (
     <div className="flex h-screen flex-col space-y-6">
       <DashboardTitle>Defect Category Threshold</DashboardTitle>
+      <div className="flex w-full items-end justify-end">
+        <Link href="/dashboard/defect-category-threshold/email-management">
+          <Button className="ml-auto bg-cyan-500 text-primary hover:bg-cyan-600">
+            Email Recipient Management
+          </Button>
+        </Link>
+      </div>
       {isLoading && <Loading />}
       {error && <Error>{error}</Error>}
       {!isLoading && !error && (

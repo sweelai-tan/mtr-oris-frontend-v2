@@ -2,7 +2,6 @@
 
 import { Search } from 'lucide-react';
 import moment from 'moment-timezone';
-import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import AlertTable from '@/components/alert-table';
@@ -11,7 +10,6 @@ import DateRangePicker, {
   DataRangePickerHandle,
 } from '@/components/date-range-picker';
 import Loading from '@/components/loading';
-import { Button } from '@/components/ui/button';
 import { getAlerts } from '@/lib/api';
 import { useConfig } from '@/lib/config-context';
 import { Alert, DateRange } from '@/lib/types';
@@ -120,11 +118,11 @@ export default function Page() {
             onClick={onSearch}
           />
         </div>
-        <Link href="/dashboard/alert-management/email-management">
+        {/* <Link href="/dashboard/alert-management/email-management">
           <Button className="ml-auto bg-cyan-500 text-primary hover:bg-cyan-600">
             Email Recipient Management
           </Button>
-        </Link>
+        </Link> */}
       </div>
       {isLoading && <Loading />}
       {error && <Error>{error}</Error>}
