@@ -24,12 +24,8 @@ export interface RectangleOnImageHandle {
   zoomOut: () => void;
   zoomReset: () => void;
   zoomMax: () => void;
-  increaseBrightness: () => void;
-  decreaseBrightness: () => void;
   setBrightnessInPercent: (percent: number) => void;
   setContrastInPercent: (percent: number) => void;
-  increaseContrast: () => void;
-  decreaseContrast: () => void;
   getRect: () => Annotation | null;
   getZoomLevel: () => number;
 }
@@ -40,12 +36,6 @@ export interface Annotation {
   width: number;
   height: number;
 }
-
-const MIN_BRIGHTNESS = 0.5;
-const MAX_BRIGHTNESS = 2.0;
-
-const MIN_CONTRAST = 0.5;
-const MAX_CONTRAST = 2.0;
 
 interface Scale {
   x: number;
@@ -143,7 +133,7 @@ export const RectangleOnImage = forwardRef<
           // Apply zoom level, brightness and contrast
           context.save();
           context.scale(zoomLevel, zoomLevel);
-          context.filter = `brightness(${brightness}) contrast(${contrast})`;
+          context.filter = `brightness(${brightness * 2}%) contrast(${contrast * 2}%)`;
 
           // // Draw the image on the canvas
           context.drawImage(
@@ -469,56 +459,15 @@ export const RectangleOnImage = forwardRef<
       return newAnnotation;
     };
 
-    const increaseBrightness = () => {
-      setBrightness((prevBrightness) => Math.min(prevBrightness + 0.1, 2)); // Max brightness 2x
-    };
-
-    const decreaseBrightness = () => {
-      setBrightness((prevBrightness) => Math.max(prevBrightness - 0.1, 0.5)); // Min brightness 0.5x
-    };
-
     const setBrightnessInPercent = (percent: number) => {
       if (percent < 0 || percent > 100) return;
-      if (percent === 50) setBrightness(1);
-
-      if (percent < 50) {
-        setBrightness(
-          Math.max(
-            MIN_BRIGHTNESS + ((1 - MIN_BRIGHTNESS) * percent) / 100,
-            MIN_BRIGHTNESS,
-          ),
-        );
-      } else {
-        setBrightness(
-          Math.min(1 + ((MAX_BRIGHTNESS - 1) * percent) / 100, MAX_BRIGHTNESS),
-        );
-      }
-    };
-
-    const increaseContrast = () => {
-      // setContrast((prevContrast) => Math.min(prevContrast + 0.1, 2)); // Max contrast 2x
-    };
-
-    const decreaseContrast = () => {
-      // setContrast((prevContrast) => Math.max(prevContrast - 0.1, 0.5)); // Min contrast 0.5x
+      setBrightness(percent);
     };
 
     const setContrastInPercent = (percent: number) => {
+      console.log(`percent: ${percent}`);
       if (percent < 0 || percent > 100) return;
-      if (percent === 50) setContrast(1);
-
-      if (percent < 50) {
-        setContrast(
-          Math.max(
-            MIN_CONTRAST + ((1 - MIN_CONTRAST) * percent) / 100,
-            MIN_CONTRAST,
-          ),
-        );
-      } else {
-        setContrast(
-          Math.min(1 + ((MAX_CONTRAST - 1) * percent) / 100, MAX_CONTRAST),
-        );
-      }
+      setContrast(percent);
     };
 
     useImperativeHandle(ref, () => ({
@@ -527,14 +476,12 @@ export const RectangleOnImage = forwardRef<
       zoomReset,
       zoomMax,
       getRect,
-      increaseBrightness,
-      decreaseBrightness,
       setBrightnessInPercent,
-      increaseContrast,
-      decreaseContrast,
       setContrastInPercent,
       getZoomLevel: () => zoomLevel,
     }));
+
+    console.log(`contrast: ${contrast}`);
 
     return (
       <div

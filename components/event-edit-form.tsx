@@ -15,7 +15,8 @@ import {
 import moment from 'moment-timezone';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import _ from 'lodash';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -96,7 +97,9 @@ export default function EventEditForm({
   // const [originalEvent, setOriginalEvent] = useState<Event | null>(null);
   const rectOnImageRef = useRef<RectangleOnImageHandle>(null);
   const [brightness, setBrightness] = useState(50);
+  const [tempBrightness, setTempBrightness] = useState(brightness);
   const [contrast, setContrast] = useState(50);
+  const [tempContrast, setTempContrast] = useState(contrast);
   const [isMovable, setIsMovable] = useState(false);
   const [isPanable, setIsPanable] = useState(false);
 
@@ -125,6 +128,41 @@ export default function EventEditForm({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event]);
+
+  const debouncedBrightnessUpdate = useCallback((value: number) => {
+    const debouncedFn = _.debounce((val: number) => {
+      setBrightness(val);
+      if (rectOnImageRef.current) {
+        rectOnImageRef.current.setBrightnessInPercent(val);
+      }
+    }, 300);
+    debouncedFn(value);
+    return () => {
+      debouncedFn.cancel();
+    };
+  }, []);
+
+  useEffect(() => {
+    debouncedBrightnessUpdate(tempBrightness);
+  }, [tempBrightness, debouncedBrightnessUpdate]);
+
+  const debouncedContrastUpdate = useCallback((value: number) => {
+    const debouncedFn = _.debounce((val: number) => {
+      setContrast(val);
+
+      if (rectOnImageRef.current) {
+        rectOnImageRef.current.setContrastInPercent(val);
+      }
+    }, 300);
+    debouncedFn(value);
+    return () => {
+      debouncedFn.cancel();
+    };
+  }, []);
+
+  useEffect(() => {
+    debouncedContrastUpdate(tempContrast);
+  }, [tempContrast, debouncedContrastUpdate]);
 
   const localEventAt = moment(event.eventAt)
     .tz('Asia/Hong_Kong')
@@ -364,18 +402,6 @@ export default function EventEditForm({
     }
   };
 
-  useEffect(() => {
-    if (rectOnImageRef.current) {
-      rectOnImageRef.current.setBrightnessInPercent(brightness);
-    }
-  }, [brightness]);
-
-  useEffect(() => {
-    if (rectOnImageRef.current) {
-      rectOnImageRef.current.setContrastInPercent(contrast);
-    }
-  }, [contrast]);
-
   if (modifiedEvent === null) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -578,11 +604,20 @@ export default function EventEditForm({
           {/* Sliders */}
           <div className="flex flex-1 flex-col items-center justify-end gap-y-2 p-4 lg:flex-row lg:space-x-6">
             <div className="flex items-center space-x-4">
-              <Sun className="h-5 w-5 text-gray-400" />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Sun className="h-5 w-5 text-gray-400" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Brightness</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <div className="flex flex-1 items-center space-x-2">
                 <Slider
                   value={[brightness]}
-                  onValueChange={(value) => setBrightness(value[0])}
+                  onValueChange={(value) => setTempBrightness(value[0])}
                   max={100}
                   step={1}
                   className="min-w-[120px]"
@@ -594,11 +629,20 @@ export default function EventEditForm({
             </div>
 
             <div className="flex items-center space-x-4">
-              <Moon className="h-5 w-5 text-gray-400" />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Moon className="h-5 w-5 text-gray-400" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Contrast</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <div className="flex flex-1 items-center space-x-2">
                 <Slider
                   value={[contrast]}
-                  onValueChange={(value) => setContrast(value[0])}
+                  onValueChange={(value) => setTempContrast(value[0])}
                   max={100}
                   step={1}
                   className="min-w-[120px]"
