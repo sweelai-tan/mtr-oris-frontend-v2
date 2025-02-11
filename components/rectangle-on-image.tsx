@@ -466,7 +466,6 @@ export const RectangleOnImage = forwardRef<
     };
 
     const setContrastInPercent = (percent: number) => {
-      console.log(`percent: ${percent}`);
       if (percent < 0 || percent > 100) return;
       setContrast(percent);
     };
@@ -481,8 +480,6 @@ export const RectangleOnImage = forwardRef<
       setContrastInPercent,
       getZoomLevel: () => zoomLevel,
     }));
-
-    console.log(`contrast: ${contrast}`);
 
     return (
       <div
