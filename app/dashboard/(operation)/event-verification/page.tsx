@@ -5,7 +5,6 @@ import {
   ArrowUpAZ,
   Search,
   SlidersHorizontalIcon,
-  X,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -391,8 +390,14 @@ function EventVerificationPage() {
           <DashboardTitle>Edit Event</DashboardTitle>
           {/* add back button */}
           {selectedEvent ? (
-            <Button variant="ghost" size="icon" onClick={() => router.back()}>
-              <X className="h-4 w-4" />
+            <Button
+              variant="outline"
+              // size="icon"
+              onClick={() => router.back()}
+              className="text-cyan-500"
+            >
+              {/* <X className="h-4 w-4" /> */}
+              Go Back
             </Button>
           ) : (
             ''

@@ -96,9 +96,9 @@ export default function EventEditForm({
   });
   // const [originalEvent, setOriginalEvent] = useState<Event | null>(null);
   const rectOnImageRef = useRef<RectangleOnImageHandle>(null);
-  const [brightness, setBrightness] = useState(50);
+  const [brightness, setBrightness] = useState(100);
   const [tempBrightness, setTempBrightness] = useState(brightness);
-  const [contrast, setContrast] = useState(50);
+  const [contrast, setContrast] = useState(100);
   const [tempContrast, setTempContrast] = useState(contrast);
   const [isMovable, setIsMovable] = useState(false);
   const [isPanable, setIsPanable] = useState(false);

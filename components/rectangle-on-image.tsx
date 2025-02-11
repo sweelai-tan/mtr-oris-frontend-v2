@@ -53,8 +53,8 @@ export const RectangleOnImage = forwardRef<
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [zoomLevel, setZoomLevel] = useState(1);
-    const [brightness, setBrightness] = useState(1);
-    const [contrast, setContrast] = useState(1);
+    const [brightness, setBrightness] = useState(100);
+    const [contrast, setContrast] = useState(100);
     const [image, setImage] = useState<HTMLImageElement | null>(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
@@ -438,7 +438,8 @@ export const RectangleOnImage = forwardRef<
 
     const zoomReset = () => {
       setZoomLevel(1);
-      setBrightness(1);
+      setBrightness(100);
+      setContrast(100);
       setImagePosition({ x: 0, y: 0 });
     };
 
