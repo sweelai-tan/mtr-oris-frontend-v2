@@ -196,33 +196,42 @@ export default function EventCard(params: EventCardProps) {
                 {/* Left side - Image placeholder */}
 
                 {/* relative aspect-[4/3] bg-gray-800 rounded-lg border border-gray-500 overflow-hidden */}
-                <div
-                  className={cn(
-                    modifiedEvent.source === EventSource.SIL_VIDEO ||
-                      modifiedEvent.source === EventSource.TML_VIDEO
-                      ? 'aspect-w-4 aspect-h-3 relative'
-                      : 'aspect-w-3 aspect-h-4 relative',
-                    'overflow-hidden rounded-lg border border-gray-500 bg-gray-800',
-                  )}
-                  onDoubleClick={handleImageDoubleClick}
-                >
-                  <RectangleOnImage
-                    imageUrl={`/v1/${event.imageSrc}`}
-                    originalHeight={event.originalHeight}
-                    originalWidth={event.originalWidth}
-                    rectX={defect ? defect.xMin : 0}
-                    rectY={defect ? defect.yMin : 0}
-                    rectWidth={defect ? defect.width : 0}
-                    rectHeight={defect ? defect.length : 0}
-                  />
-                  {event.parentId ? (
-                    <div className="absolute bottom-2 right-2">
-                      <SquareStack className="h-4 w-4" />
-                    </div>
-                  ) : (
-                    ''
-                  )}
-                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={cn(
+                          modifiedEvent.source === EventSource.SIL_VIDEO ||
+                            modifiedEvent.source === EventSource.TML_VIDEO
+                            ? 'aspect-w-4 aspect-h-3 relative'
+                            : 'aspect-w-3 aspect-h-4 relative',
+                          'overflow-hidden rounded-lg border border-gray-500 bg-gray-800',
+                        )}
+                        onDoubleClick={handleImageDoubleClick}
+                      >
+                        <RectangleOnImage
+                          imageUrl={`/v1/${event.imageSrc}`}
+                          originalHeight={event.originalHeight}
+                          originalWidth={event.originalWidth}
+                          rectX={defect ? defect.xMin : 0}
+                          rectY={defect ? defect.yMin : 0}
+                          rectWidth={defect ? defect.width : 0}
+                          rectHeight={defect ? defect.length : 0}
+                        />
+                        {event.parentId ? (
+                          <div className="absolute bottom-2 right-2">
+                            <SquareStack className="h-4 w-4" />
+                          </div>
+                        ) : (
+                          ''
+                        )}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Double click to view event detail</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
 
                 {/* Right side - Details */}
                 <div className="space-y-2 text-sm">
