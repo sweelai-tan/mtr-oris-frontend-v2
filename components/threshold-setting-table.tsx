@@ -150,42 +150,46 @@ export default function ThresholdSettingTable({
     field: string,
     disabled?: boolean,
   ) => (
-    <div className="flex items-center space-x-2">
-      <span className="text-gray-400">{label}</span>
-      <Checkbox
-        checked={checkboxState[key]}
-        onCheckedChange={(check: boolean) =>
-          handleCheckboxChange(key, check, category, field)
-        }
-        disabled={disabled ?? false}
-      />
-      <Input
-        type="number"
-        onInput={handlePositiveNumberInput}
-        className="w-24 border-gray-700 bg-transparent [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-        onChange={(e) =>
-          handleInputChange(
-            category,
-            field,
-            parseFloat((e.target as HTMLInputElement).value),
-          )
-        }
-        value={
-          typeof modfifiedThreshold.setting[
-            category as keyof typeof modfifiedThreshold.setting
-          ] === 'object' &&
-          modfifiedThreshold.setting[
-            category as keyof typeof modfifiedThreshold.setting
-          ] !== null
-            ? (
-                modfifiedThreshold.setting[
-                  category as keyof typeof modfifiedThreshold.setting
-                ] as ThresholdCategory
-              )[field as keyof ThresholdCategory]
-            : ''
-        }
-        disabled={disabled ?? false}
-      />
+    <div className="flex items-center justify-between space-x-2">
+      <div className="flex items-center space-x-2">
+        <span className="text-gray-400">{label}</span>
+        <Checkbox
+          checked={checkboxState[key]}
+          onCheckedChange={(check: boolean) =>
+            handleCheckboxChange(key, check, category, field)
+          }
+          disabled={disabled ?? false}
+        />
+      </div>
+      <div className="flex w-full items-center justify-center">
+        <Input
+          type="number"
+          onInput={handlePositiveNumberInput}
+          className="w-24 border-gray-700 bg-transparent [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          onChange={(e) =>
+            handleInputChange(
+              category,
+              field,
+              parseFloat((e.target as HTMLInputElement).value),
+            )
+          }
+          value={
+            typeof modfifiedThreshold.setting[
+              category as keyof typeof modfifiedThreshold.setting
+            ] === 'object' &&
+            modfifiedThreshold.setting[
+              category as keyof typeof modfifiedThreshold.setting
+            ] !== null
+              ? (
+                  modfifiedThreshold.setting[
+                    category as keyof typeof modfifiedThreshold.setting
+                  ] as ThresholdCategory
+                )[field as keyof ThresholdCategory]
+              : ''
+          }
+          disabled={disabled ?? false}
+        />
+      </div>
     </div>
   );
 
