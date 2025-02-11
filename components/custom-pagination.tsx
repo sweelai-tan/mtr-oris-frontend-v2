@@ -109,22 +109,6 @@ export default function CustomPagination({
   return (
     <div className={`dark flex items-center justify-between p-4 ${className}`}>
       <div className="flex items-center gap-2 text-sm text-gray-400">
-        <span className="text-sm">Items per page</span>
-        <Select
-          value={itemsPerPage.toString()}
-          onValueChange={(value) => onItemsPerPageChange(Number(value))}
-        >
-          <SelectTrigger className="h-8 w-[70px]">
-            <SelectValue placeholder={itemsPerPage} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="10">10</SelectItem>
-            <SelectItem value="20">20</SelectItem>
-            <SelectItem value="30">30</SelectItem>
-            <SelectItem value="40">40</SelectItem>
-            <SelectItem value="50">50</SelectItem>
-          </SelectContent>
-        </Select>
         <div className="ml-2 flex items-center space-x-2">
           <span className="text-sm">Page</span>
           <Input
@@ -142,6 +126,22 @@ export default function CustomPagination({
         <div>
           <span className="text-sm text-gray-400">({totalItems} items)</span>
         </div>
+        <span className="pl-4 text-sm">Items per page</span>
+        <Select
+          value={itemsPerPage.toString()}
+          onValueChange={(value) => onItemsPerPageChange(Number(value))}
+        >
+          <SelectTrigger className="h-8 w-[70px]">
+            <SelectValue placeholder={itemsPerPage} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+            <SelectItem value="30">30</SelectItem>
+            <SelectItem value="40">40</SelectItem>
+            <SelectItem value="50">50</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div>
