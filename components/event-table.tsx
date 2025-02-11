@@ -319,12 +319,12 @@ export default function EventTable({ events }: EventTableProps) {
               Side
               <ChevronDown className="ml-1 inline-block h-4 w-4" />
             </TableHead>
-            <TableHead
-              className="text-gray-400"
-              onClick={() => requestSort('status')}
-            >
-              Status
-              <ChevronDown className="ml-1 inline-block h-4 w-4" />
+            <TableHead className="text-gray-400">
+              Class
+              <ChevronDown
+                className="ml-1 inline-block h-4 w-4"
+                onClick={() => requestSort('class')}
+              />
             </TableHead>
             <TableHead
               className="text-gray-400"
@@ -333,12 +333,12 @@ export default function EventTable({ events }: EventTableProps) {
               Type
               <ChevronDown className="ml-1 inline-block h-4 w-4" />
             </TableHead>
-            <TableHead className="text-gray-400">
-              Class
-              <ChevronDown
-                className="ml-1 inline-block h-4 w-4"
-                onClick={() => requestSort('class')}
-              />
+            <TableHead
+              className="text-gray-400"
+              onClick={() => requestSort('status')}
+            >
+              Status
+              <ChevronDown className="ml-1 inline-block h-4 w-4" />
             </TableHead>
             <TableHead className="text-gray-400">
               Remarks{' '}
@@ -376,11 +376,7 @@ export default function EventTable({ events }: EventTableProps) {
               <TableCell className="text-gray-300">
                 {getEventPositionLabel(event.position)}
               </TableCell>
-              <TableCell>
-                <span className={getStatusColor(event.status)}>
-                  {statusTranslations[event.status]}
-                </span>
-              </TableCell>
+
               <TableCell className="text-gray-300">
                 {getDefectGroupLabel(
                   event.defects.length !== 0
@@ -398,6 +394,11 @@ export default function EventTable({ events }: EventTableProps) {
                       ? event.sysDefects[0].class
                       : DefectClass.UNKNOWN,
                 )}
+              </TableCell>
+              <TableCell>
+                <span className={getStatusColor(event.status)}>
+                  {statusTranslations[event.status]}
+                </span>
               </TableCell>
               <TableCell className="flex items-center gap-2 text-gray-300">
                 <span className="truncate">{event.remark}</span>
