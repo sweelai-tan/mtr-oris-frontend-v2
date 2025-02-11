@@ -43,6 +43,13 @@ export default function Page() {
       try {
         // const response = await axios.get("/thresholds");
         const result = await getThresholds(source);
+
+        // set cat1 to 9999999
+        result.forEach((threshold) => {
+          threshold.setting.cat1.area = 9999999;
+          threshold.setting.cat1.length = 9999999;
+          threshold.setting.cat1.width = 9999999;
+        });
         setThresholds(result);
         setSelectedThreshold(
           result.find(
@@ -61,7 +68,7 @@ export default function Page() {
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [source]);
 
   const handdleUpdate = async (threshold: Threshold) => {
     if (!source) return;

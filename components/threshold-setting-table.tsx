@@ -30,17 +30,17 @@ export default function ThresholdSettingTable({
     length_cat2c: threshold.setting.cat2c.length > 0,
     length_cat2b: threshold.setting.cat2b.length > 0,
     length_cat2a: threshold.setting.cat2a.length > 0,
-    length_cat1: threshold.setting.cat1.length > 0,
+    length_cat1: true,
     width_cat3: threshold.setting.cat3.width > 0,
     width_cat2c: threshold.setting.cat2c.width > 0,
     width_cat2b: threshold.setting.cat2b.width > 0,
     width_cat2a: threshold.setting.cat2b.width > 0,
-    width_cat1: threshold.setting.cat1.width > 0,
+    width_cat1: true,
     area_cat3: threshold.setting.cat3.area > 0,
     area_cat2c: threshold.setting.cat2c.area > 0,
     area_cat2b: threshold.setting.cat2b.area > 0,
     area_cat2a: threshold.setting.cat2b.area > 0,
-    area_cat1: threshold.setting.cat1.area > 0,
+    area_cat1: true,
   });
 
   const isCheckboxInputChecked = (): boolean => {
@@ -61,17 +61,17 @@ export default function ThresholdSettingTable({
       length_cat2c: threshold.setting.cat2c.length > 0,
       length_cat2b: threshold.setting.cat2b.length > 0,
       length_cat2a: threshold.setting.cat2a.length > 0,
-      length_cat1: threshold.setting.cat1.length > 0,
+      length_cat1: true,
       width_cat3: threshold.setting.cat3.width > 0,
       width_cat2c: threshold.setting.cat2c.width > 0,
       width_cat2b: threshold.setting.cat2b.width > 0,
       width_cat2a: threshold.setting.cat2b.width > 0,
-      width_cat1: threshold.setting.cat1.width > 0,
+      width_cat1: true,
       area_cat3: threshold.setting.cat3.area > 0,
       area_cat2c: threshold.setting.cat2c.area > 0,
       area_cat2b: threshold.setting.cat2b.area > 0,
       area_cat2a: threshold.setting.cat2b.area > 0,
-      area_cat1: threshold.setting.cat1.area > 0,
+      area_cat1: true,
     });
   }, [threshold]);
 
@@ -85,7 +85,6 @@ export default function ThresholdSettingTable({
   };
 
   const handleUndo = () => {
-    console.log('handleUndo');
     setModifiedThreshold(JSON.parse(JSON.stringify(threshold)));
   };
 
@@ -149,6 +148,7 @@ export default function ThresholdSettingTable({
     key: string,
     category: string,
     field: string,
+    disabled?: boolean,
   ) => (
     <div className="flex items-center space-x-2">
       <span className="text-gray-400">{label}</span>
@@ -157,6 +157,7 @@ export default function ThresholdSettingTable({
         onCheckedChange={(check: boolean) =>
           handleCheckboxChange(key, check, category, field)
         }
+        disabled={disabled ?? false}
       />
       <Input
         type="number"
@@ -183,6 +184,7 @@ export default function ThresholdSettingTable({
               )[field as keyof ThresholdCategory]
             : ''
         }
+        disabled={disabled ?? false}
       />
     </div>
   );
@@ -296,7 +298,7 @@ export default function ThresholdSettingTable({
 
             {renderCheckboxInput('to', 'length_cat2a', 'cat2a', 'length')}
 
-            {renderCheckboxInput('to', 'length_cat1', 'cat1', 'length')}
+            {renderCheckboxInput('to', 'length_cat1', 'cat1', 'length', true)}
           </div>
         </div>
       )}
@@ -522,7 +524,7 @@ export default function ThresholdSettingTable({
               }}
             />
           </div> */}
-            {renderCheckboxInput('to', 'width_cat1', 'cat1', 'width')}
+            {renderCheckboxInput('to', 'width_cat1', 'cat1', 'width', true)}
           </div>
         </div>
       )}
@@ -547,7 +549,7 @@ export default function ThresholdSettingTable({
 
             {renderCheckboxInput('to', 'area_cat2a', 'cat2a', 'area')}
 
-            {renderCheckboxInput('to', 'area_cat1', 'cat1', 'area')}
+            {renderCheckboxInput('to', 'area_cat1', 'cat1', 'area', true)}
           </div>
         </div>
       )}
