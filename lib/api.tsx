@@ -106,6 +106,7 @@ export const getEvents = async (params: GetEventsParams): Promise<Event[]> => {
 
   const response = await axiosInstance.get(
     `/v1//events/${source}?${queryParams.toString()}`,
+    { timeout: 60000 },
   );
   return response.data.data['events'];
 };
@@ -165,6 +166,7 @@ export const getStatusCount = async (
 
   const response = await axiosInstance.get(
     `/v1/events/${source}/status-aggregate?${queryParams.toString()}`,
+    { timeout: 60000 },
   );
   return response.data.data['statusAggregate'];
 };
