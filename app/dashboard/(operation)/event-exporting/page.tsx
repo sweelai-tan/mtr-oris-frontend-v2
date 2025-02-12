@@ -7,6 +7,7 @@ import {
   SlidersHorizontalIcon,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import moment from 'moment-timezone';
 
 import { cn } from '@/lib/utils';
 import DateRangePicker, {
@@ -72,9 +73,14 @@ export default function Page() {
     setIsLoading(true);
     setError(null);
     try {
+      const dateFrom = moment
+        .tz(dateRange.from, 'Asia/Hong_Kong')
+        .utc()
+        .toDate();
+      const dateTo = moment.tz(dateRange.to, 'Asia/Hong_Kong').utc().toDate();
       const responseEvents = await getEvents({
-        dateFrom: dateRange.from,
-        dateTo: dateRange.to,
+        dateFrom: dateFrom,
+        dateTo: dateTo,
         source,
         eventDirections,
         chainageFrom: chainageRange.from,

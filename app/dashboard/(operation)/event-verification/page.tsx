@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import moment from 'moment-timezone';
 
 import { cn } from '@/lib/utils';
 import DateRangePicker, {
@@ -103,6 +104,12 @@ function EventVerificationPage() {
 
     setIsLoading(true);
     setError(null);
+    setStatusCount({
+      all: 0,
+      pending: 0,
+      verified: 0,
+      modified: 0,
+    });
 
     try {
       console.log('fetching events');
@@ -111,9 +118,15 @@ function EventVerificationPage() {
       // console.log(`direction ${eventDirections}`);
       // console.log(`chainageRange ${chainageRange.from} ~ ${chainageRange.to}`);
 
+      const dateFrom = moment
+        .tz(dateRange.from, 'Asia/Hong_Kong')
+        .utc()
+        .toDate();
+      const dateTo = moment.tz(dateRange.to, 'Asia/Hong_Kong').utc().toDate();
+
       const responseEvents = await getEvents({
-        dateFrom: dateRange.from,
-        dateTo: dateRange.to,
+        dateFrom: dateFrom,
+        dateTo: dateTo,
         source,
         eventDirections,
         chainageFrom: chainageRange.from,
@@ -130,8 +143,8 @@ function EventVerificationPage() {
 
       const responseStatusCount = await getStatusCount({
         source,
-        dateFrom: dateRange.from,
-        dateTo: dateRange.to,
+        dateFrom: dateFrom,
+        dateTo: dateTo,
         carName: carName,
         directions: eventDirections,
         chainageFrom: chainageRange.from,
