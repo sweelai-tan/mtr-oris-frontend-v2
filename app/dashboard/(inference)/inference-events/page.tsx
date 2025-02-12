@@ -15,7 +15,6 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { source } = useConfig();
-  console.log('source', source);
 
   const fetchInferences = useCallback(async () => {
     if (!source) {

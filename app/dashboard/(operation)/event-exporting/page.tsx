@@ -55,8 +55,6 @@ export default function Page() {
     remark: undefined,
   });
 
-  console.log('filterData', filterData);
-
   const fetchEvents = useCallback(async () => {
     console.log(
       `Fetching events ${source} from ${dateRange?.from} to ${dateRange?.to} (${searchCount})`,

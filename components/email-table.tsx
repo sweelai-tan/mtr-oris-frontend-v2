@@ -161,8 +161,6 @@ export default function EmailTable({ emails }: { emails: Email[] }) {
     );
   };
 
-  console.log('modfifiedEmails', modfifiedEmails);
-
   return (
     <div className="space-y-4 rounded-lg bg-slate-900 p-4">
       <div className="flex items-center justify-between">

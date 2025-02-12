@@ -97,8 +97,6 @@ export default function Page() {
   // Slice the alerts array to get the alerts for the current page
   const currentAlerts = alerts.slice(startIndex, endIndex);
 
-  console.log('currentAlerts', currentAlerts);
-
   return (
     <div className="flex h-screen flex-col space-y-6">
       <DashboardTitle>Alert Management</DashboardTitle>
